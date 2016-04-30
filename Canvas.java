@@ -24,19 +24,22 @@ public class Canvas extends JPanel
 	}
 	
 	public void addShape(DShapeModel shapeModel) {
+		DShape theShape;
 		if (shapeModel instanceof DRectModel) {
-			DRect rectangle = new DRect((DRectModel) shapeModel);
-			shapes.add(rectangle);
+			theShape = new DRect((DRectModel) shapeModel);
 		}
 		else if (shapeModel instanceof DOvalModel) {
-			
+			theShape = new DOVal((DOvalModel) shapeModel);
 		}
 		else if (shapeModel instanceof DTextModel) {
-			
+			theShape = new DText(); 
 		}
-		else if (shapeModel instanceof DLineModel) {
-			
+		else{
+			theShape = new DLine();
 		}
+		shapes.add(theShape);
 		repaint();
 	}
+	
+	
 }

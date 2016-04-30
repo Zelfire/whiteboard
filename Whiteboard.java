@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class Whiteboard extends JFrame
 {
@@ -13,6 +14,7 @@ public class Whiteboard extends JFrame
 		add(canvas, BorderLayout.CENTER);
 		
 		//Add the controls
+		JLabel addLabel = new JLabel("Add: ");
 		JButton rectButton = new JButton("Rect");
 		rectButton.addActionListener(new ActionListener() {
 			@Override
@@ -28,9 +30,23 @@ public class Whiteboard extends JFrame
 			}
 		});
 		JButton ovalButton = new JButton("Oval");
+		ovalButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				DShapeModel oval = new DOvalModel();
+				//Temporary values for testing purposes
+				oval.setX(100);
+				oval.setY(100);
+				oval.setWidth(200);
+				oval.setHeight(200);
+				oval.setColor(Color.GRAY);
+				canvas.addShape(oval);
+			}
+		});
 		JButton lineButton = new JButton("Line");
 		JButton textButton = new JButton("Text");
 		Box shapesBox = Box.createHorizontalBox();
+		shapesBox.add(addLabel);
 		shapesBox.add(rectButton);
 		shapesBox.add(ovalButton);
 		shapesBox.add(lineButton);
@@ -55,11 +71,35 @@ public class Whiteboard extends JFrame
 		moveBox.add(moveToBackBtn);
 		moveBox.add(removeShapeBtn);
 		
+		DefaultTableModel tmodel = new DefaultTableModel(){
+			@Override 
+			public boolean isCellEditable(int row, int column) { 
+				return false; 
+			} 
+		}; 
+		JTable shapeInfo = new JTable(tmodel);
+		shapeInfo.setMinimumSize(new Dimension());
+		//The addColumn calls should be creating column headings with the the given names however
+		//it is not visible for some reason so I made a row with the headers, but this should not be necessary 
+		tmodel.addColumn(""); 
+		tmodel.addColumn("");
+		tmodel.addColumn("");
+		tmodel.addColumn("");
+		Object[] firstRow = { "X", "Y", "WIDTH", "HEIGHT" };
+		tmodel.addRow(firstRow);
+		
+		
 		Box controlsBox = Box.createVerticalBox();
+		controlsBox.add(Box.createVerticalStrut(20));
 		controlsBox.add(shapesBox);
+		controlsBox.add(Box.createVerticalStrut(20));
 		controlsBox.add(setColorBtn);
+		controlsBox.add(Box.createVerticalStrut(20));
 		controlsBox.add(textBox);
+		controlsBox.add(Box.createVerticalStrut(20));
 		controlsBox.add(moveBox);
+		controlsBox.add(Box.createVerticalStrut(20));
+		controlsBox.add(shapeInfo);
 		add(controlsBox, BorderLayout.WEST);
 		
 		//Align controls to the left

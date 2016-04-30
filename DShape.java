@@ -34,4 +34,6 @@ public abstract class DShape
 	public Color getColor() {
 		return shapeModel.getColor();
 	}
+	
+	
 }
