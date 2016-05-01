@@ -52,7 +52,35 @@ public class Whiteboard extends JFrame
 		shapesBox.add(lineButton);
 		shapesBox.add(textButton);
 		
-		JButton setColorBtn = new JButton("Set Color");
+		//Needs improvement
+		JButton setColorBtn = new JButton("Set Color"); 
+		setColorBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (canvas.getSelected() != null) {
+					JFrame colorChooser = new JFrame("Pick a Color");
+					colorChooser.setLayout(new FlowLayout());
+					JPanel colorHolder = new JPanel();
+					colorChooser.setDefaultCloseOperation(EXIT_ON_CLOSE);
+					JColorChooser colors = new JColorChooser();
+					JButton set = new JButton("Set");
+					set.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							DShape selected = canvas.getSelected();
+							DShapeModel selectedModel = selected.getModel();
+							selectedModel.setColor(colors.getColor());
+						}
+					});
+					colorHolder.add(colors);
+					colorHolder.add(set);
+					colorChooser.add(colorHolder);
+					colorChooser.pack();
+					colorChooser.setVisible(true);
+				}
+			
+			}
+		});
 		
 		JTextField textInput = new JTextField();
 		textInput.setMaximumSize(new Dimension(100, textInput.getPreferredSize().height)); //Temporary size for now
@@ -80,7 +108,7 @@ public class Whiteboard extends JFrame
 		JTable shapeInfo = new JTable(tmodel);
 		shapeInfo.setMinimumSize(new Dimension());
 		//The addColumn calls should be creating column headings with the the given names however
-		//it is not visible for some reason so I made a row with the headers, but this should not be necessary 
+		//it is not visible for some reason so I made a row with the header names instead, but this should not be necessary 
 		tmodel.addColumn(""); 
 		tmodel.addColumn("");
 		tmodel.addColumn("");

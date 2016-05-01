@@ -13,4 +13,5 @@ public class DRect extends DShape
 		g2d.setColor(getColor());
 		g2d.fill(rect);
 	}
+	
 }

@@ -1,59 +1,81 @@
-import java.awt.Color;
+import java.awt.*;
+import java.util.*;
 
 
 public class DShapeModel
 {
-	private int x;
-	private int y;
-	private int width;
-	private int height;
+	private Rectangle bound;
 	private Color color;
+	private ArrayList<ModelListener> listeners;
 	
 	public DShapeModel() {
-		x = 0;
-		y = 0;
-		width = 0;
-		height = 0;
+		bound = new Rectangle(0,0,0,0);
 		color = Color.GRAY;
+		listeners = new ArrayList<>();
 	}
 	
 	public int getX() {
-		return x;
+		return bound.x;
 	}
 	
 	public int getY() {
-		return y;
+		return bound.y;
 	}
 	
 	public int getWidth() {
-		return width;
+		return bound.width;
 	}
 	
 	public int getHeight() {
-		return height;
+		return bound.height;
 	}
 	
 	public Color getColor() {
 		return color;
 	}
 	
+	public Rectangle getBounds()
+	{
+		return bound;
+	}
+	
 	public void setX(int newX) {
-		x = newX;
+		bound.x = newX;
+		notifyListeners();
 	}
 	
 	public void setY(int newY) {
-		y = newY;
+		bound.y = newY;
+		notifyListeners();
 	}
 	
 	public void setWidth(int newWidth) {
-		width = newWidth;
+		bound.width = newWidth;
+		notifyListeners();
 	}
 	
 	public void setHeight(int newHeight) {
-		height = newHeight;
+		bound.height = newHeight;
+		notifyListeners();
 	}
 	
 	public void setColor(Color newColor) {
 		color = newColor;
+		notifyListeners();
 	}
+	
+	public void addModelListener(ModelListener listener)
+	{
+		listeners.add(listener);
+	}
+	
+	private void notifyListeners()
+	{
+		for (ModelListener ml: listeners)
+		{
+			ml.modelChanged(this);
+		}
+	}
+	
+	
 }
