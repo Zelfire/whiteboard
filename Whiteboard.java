@@ -61,7 +61,8 @@ public class Whiteboard extends JFrame
 					JFrame colorChooser = new JFrame("Pick a Color");
 					colorChooser.setLayout(new FlowLayout());
 					JPanel colorHolder = new JPanel();
-					colorChooser.setDefaultCloseOperation(EXIT_ON_CLOSE);
+					colorHolder.setPreferredSize(canvas.getPreferredSize());
+					colorChooser.setDefaultCloseOperation(HIDE_ON_CLOSE);
 					JColorChooser colors = new JColorChooser();
 					JButton set = new JButton("Set");
 					set.addActionListener(new ActionListener() {
@@ -92,6 +93,13 @@ public class Whiteboard extends JFrame
 		
 		
 		JButton moveToFrontBtn = new JButton("Move to Front");
+		moveToFrontBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				canvas.moveToFront();
+			}
+		});
 		JButton moveToBackBtn = new JButton("Move to Back");
 		JButton removeShapeBtn = new JButton("Remove Shape");
 		Box moveBox = Box.createHorizontalBox();
