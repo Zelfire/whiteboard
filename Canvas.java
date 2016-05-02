@@ -8,6 +8,8 @@ public class Canvas extends JPanel
 {
 	private ArrayList<DShape> shapes;
 	private DShape selected;
+	private int preXGap; //preXGap and preYGap should probably be moved someplace else
+	private int preYGap;
 	
 	public Canvas() {
 		int INITIAL_WIDTH = 400;
@@ -15,14 +17,15 @@ public class Canvas extends JPanel
 		setPreferredSize(new Dimension(INITIAL_WIDTH, INITIAL_HEIGHT));
 		setBackground(Color.WHITE);
 		this.addMouseMotionListener(new MouseMotionListener() {
+
 			@Override
 			public void mouseDragged(MouseEvent e)
 			{
 				if (selected != null) {
 					if (selected.getBounds().contains(e.getPoint())) {
 						DShapeModel selectedModel = selected.getModel();
-						selectedModel.setX(e.getX() - selected.getWidth() / 2);
-						selectedModel.setY(e.getY() - selected.getHeight() / 2);
+						selectedModel.setX(e.getX() - preXGap);
+						selectedModel.setY(e.getY() - preYGap);
 					}
 				}
 			}
@@ -37,33 +40,37 @@ public class Canvas extends JPanel
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//Allows user to select shape in background by double clicking
-				if (e.getClickCount() > 1) {
-					for (DShape s : shapes) {
-						Rectangle bounds = s.getBounds();
-						if (bounds.contains(e.getPoint()) && s != selected) {
-							selected = s;
-							break;
-						}
-					}
-				}
-				else {
-					for (DShape s : shapes) {
-						Rectangle bounds = s.getBounds();
-						if (bounds.contains(e.getPoint())) {
-							selected = s;
-						}
-					}
-				}
-				
-				repaint();
-				
 			}
 			@Override
 			public void mouseReleased(MouseEvent e) {
 			}
 			@Override
 			public void mousePressed(MouseEvent e) {
+				//Allows user to select shape in background by double clicking
+				if (e.getClickCount() > 1) {
+					for (DShape s : shapes) {
+						Rectangle bounds = s.getBounds();
+						if (bounds.contains(e.getPoint()) && s != selected) {
+							setSelected(s);
+							break;
+						}
+					}
+				}
+				//Else select front-most shape
+				else {
+					for (DShape s : shapes) {
+						Rectangle bounds = s.getBounds();
+						if (bounds.contains(e.getPoint())) {
+							setSelected(s);
+						}
+					}
+				}
+				
+				//Set the distance between the clicked point and the bounded rectangle of the shape (Used for shape movement when dragging mouse)
+				if (selected.getBounds().contains(e.getPoint())) {
+					preXGap = e.getX() - selected.getX();
+					preYGap = e.getY() - selected.getY();	
+				}
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {	
@@ -78,6 +85,7 @@ public class Canvas extends JPanel
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		
 		for (DShape shape : shapes) {
 			shape.draw(g);
 			if (shape.equals(selected))
@@ -133,15 +141,29 @@ public class Canvas extends JPanel
 	
 	public void removeShape()
 	{
-		shapes.remove(selected);
-		repaint();
+		if (selected != null) {
+			shapes.remove(selected);
+			selected = null;
+			repaint();	
+		}
 	}
 	
 	public void moveToFront()
 	{
-		shapes.remove(selected);
-		shapes.add(shapes.size()-1, selected);
-		repaint();
+		if (selected != null) {
+			shapes.remove(selected);
+			shapes.add(shapes.size(), selected);
+			repaint();	
+		}
+	}
+
+	public void moveToBack()
+	{
+		if (selected != null) {
+			shapes.remove(selected);
+			shapes.add(0, selected);
+			repaint();
+		}
 	}
 	
 }

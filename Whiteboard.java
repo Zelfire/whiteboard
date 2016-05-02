@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -78,16 +79,28 @@ public class Whiteboard extends JFrame
 		moveToFrontBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//canvas.moveToFront();
+				canvas.moveToFront();
 			}
 		});
 		JButton moveToBackBtn = new JButton("Move to Back");
+		moveToBackBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				canvas.moveToBack();
+			}
+		});
 		JButton removeShapeBtn = new JButton("Remove Shape");
+		removeShapeBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				canvas.removeShape();
+			}
+		});
 		Box moveBox = Box.createHorizontalBox();
 		moveBox.add(moveToFrontBtn);
 		moveBox.add(moveToBackBtn);
 		moveBox.add(removeShapeBtn);
-		
+
 		DefaultTableModel tmodel = new DefaultTableModel(){
 			@Override 
 			public boolean isCellEditable(int row, int column) { 
@@ -95,16 +108,11 @@ public class Whiteboard extends JFrame
 			} 
 		}; 
 		JTable shapeInfo = new JTable(tmodel);
-		shapeInfo.setMinimumSize(new Dimension());
-		//The addColumn calls should be creating column headings with the the given names however
-		//it is not visible for some reason so I made a row with the header names instead, but this should not be necessary 
-		tmodel.addColumn(""); 
-		tmodel.addColumn("");
-		tmodel.addColumn("");
-		tmodel.addColumn("");
-		Object[] firstRow = { "X", "Y", "WIDTH", "HEIGHT" };
-		tmodel.addRow(firstRow);
-		
+		shapeInfo.setMinimumSize(new Dimension()); 
+		tmodel.addColumn("X"); 
+		tmodel.addColumn("Y");
+		tmodel.addColumn("WIDTH");
+		tmodel.addColumn("HEIGHT");
 		
 		Box controlsBox = Box.createVerticalBox();
 		controlsBox.add(Box.createVerticalStrut(20));
@@ -116,7 +124,7 @@ public class Whiteboard extends JFrame
 		controlsBox.add(Box.createVerticalStrut(20));
 		controlsBox.add(moveBox);
 		controlsBox.add(Box.createVerticalStrut(20));
-		controlsBox.add(shapeInfo);
+		controlsBox.add(new JScrollPane(shapeInfo));
 		add(controlsBox, BorderLayout.WEST);
 		
 		//Align controls to the left
@@ -129,6 +137,13 @@ public class Whiteboard extends JFrame
 	}
 	
 	public static void main(String[] args) {
-		Whiteboard frame = new Whiteboard();
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				new Whiteboard();
+			}
+		});
 	}
 }
