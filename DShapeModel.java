@@ -69,6 +69,10 @@ public class DShapeModel
 		listeners.add(listener);
 	}
 	
+	public void removeModelListener(ModelListener listener) {
+		listeners.remove(listener);
+	}
+	
 	private void notifyListeners()
 	{
 		for (ModelListener ml: listeners)

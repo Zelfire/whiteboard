@@ -4,11 +4,6 @@ import java.awt.geom.Ellipse2D;
 
 public class DOVal extends DShape
 {
-	
-	public DOVal(DOvalModel shapeModel) {
-		super(shapeModel);
-	}
-
 	@Override
 	public void draw(Graphics g)
 	{

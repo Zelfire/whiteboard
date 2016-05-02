@@ -2,10 +2,6 @@ import java.awt.*;
 
 public class DRect extends DShape
 {
-	public DRect(DRectModel shapeModel) {
-		super(shapeModel);
-	}
-	
 	@Override
 	public void draw(Graphics g) {
 		Rectangle rect = new Rectangle(getX(), getY(), getWidth(), getHeight());

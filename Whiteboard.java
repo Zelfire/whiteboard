@@ -25,7 +25,7 @@ public class Whiteboard extends JFrame
 				rectangle.setY(100);
 				rectangle.setWidth(100);
 				rectangle.setHeight(100);
-				rectangle.setColor(Color.GRAY);
+				rectangle.setColor(Color.RED);
 				canvas.addShape(rectangle);
 			}
 		});
@@ -35,8 +35,8 @@ public class Whiteboard extends JFrame
 			public void actionPerformed(ActionEvent e) {
 				DShapeModel oval = new DOvalModel();
 				//Temporary values for testing purposes
-				oval.setX(100);
-				oval.setY(100);
+				oval.setX(200);
+				oval.setY(200);
 				oval.setWidth(200);
 				oval.setHeight(200);
 				oval.setColor(Color.GRAY);
@@ -52,32 +52,14 @@ public class Whiteboard extends JFrame
 		shapesBox.add(lineButton);
 		shapesBox.add(textButton);
 		
-		//Needs improvement
 		JButton setColorBtn = new JButton("Set Color"); 
 		setColorBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				DShape selected = canvas.getSelected();
 				if (canvas.getSelected() != null) {
-					JFrame colorChooser = new JFrame("Pick a Color");
-					colorChooser.setLayout(new FlowLayout());
-					JPanel colorHolder = new JPanel();
-					colorHolder.setPreferredSize(canvas.getPreferredSize());
-					colorChooser.setDefaultCloseOperation(HIDE_ON_CLOSE);
-					JColorChooser colors = new JColorChooser();
-					JButton set = new JButton("Set");
-					set.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							DShape selected = canvas.getSelected();
-							DShapeModel selectedModel = selected.getModel();
-							selectedModel.setColor(colors.getColor());
-						}
-					});
-					colorHolder.add(colors);
-					colorHolder.add(set);
-					colorChooser.add(colorHolder);
-					colorChooser.pack();
-					colorChooser.setVisible(true);
+					Color newColor = JColorChooser.showDialog(null, "Color", selected.getColor());
+					selected.getModel().setColor(newColor);
 				}
 			
 			}
@@ -94,10 +76,9 @@ public class Whiteboard extends JFrame
 		
 		JButton moveToFrontBtn = new JButton("Move to Front");
 		moveToFrontBtn.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				canvas.moveToFront();
+				//canvas.moveToFront();
 			}
 		});
 		JButton moveToBackBtn = new JButton("Move to Back");

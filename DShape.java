@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.Graphics;
 
 public abstract class DShape implements ModelListener
 {
@@ -7,12 +6,7 @@ public abstract class DShape implements ModelListener
 	private Canvas view;
 	
 	public DShape() {
-		
-	}
-	
-	public DShape(DShapeModel model) {
-		shapeModel = model;
-		model.addModelListener(this);
+		shapeModel = null;
 	}
 	
 	public abstract void draw(Graphics g);
@@ -50,6 +44,11 @@ public abstract class DShape implements ModelListener
 	@Override
 	public void modelChanged(DShapeModel model) {
 		view.repaint();
+	}
+	
+	public void setModel(DShapeModel newModel) {
+		shapeModel = newModel;
+		shapeModel.addModelListener(this);
 	}
 	
 	public DShapeModel getModel()

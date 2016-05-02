@@ -1,70 +1,77 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+
 import javax.swing.*;
 
 public class Canvas extends JPanel
 {
 	private ArrayList<DShape> shapes;
 	private DShape selected;
-	private MouseListener mouseListener;
 	
 	public Canvas() {
 		int INITIAL_WIDTH = 400;
 		int INITIAL_HEIGHT = 400;
 		setPreferredSize(new Dimension(INITIAL_WIDTH, INITIAL_HEIGHT));
 		setBackground(Color.WHITE);
-		mouseListener = new MouseListener() {
-			int initialX;
-			int initialY;
+		this.addMouseMotionListener(new MouseMotionListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseDragged(MouseEvent e)
+			{
 				if (selected != null) {
-					DShape selected = getSelected();
-					DShapeModel selectedModel = selected.getModel();
-					Rectangle bounds = selectedModel.getBounds();
-					if (bounds.contains(new Point(initialX, initialY))) {
+					if (selected.getBounds().contains(e.getPoint())) {
+						DShapeModel selectedModel = selected.getModel();
 						selectedModel.setX(e.getX() - selected.getWidth() / 2);
 						selectedModel.setY(e.getY() - selected.getHeight() / 2);
-					} 
-				}
-				
-			}
-			
-			@Override
-			//Allows user to also select the shape in the background by double clicking, but it creates the problem that before switching the selection it translates the previous shape
-			//We can remove this functionality to select the one behind, but I would like to try to make it work somehow
-			public void mousePressed(MouseEvent e) {
-				initialX = e.getX();
-				initialY = e.getY();
-				if (selected != null) {
-					Point p = e.getPoint();
-					if (!selected.getBounds().contains(p) || e.getClickCount() > 1)
-					{
-						for (DShape shape : shapes) {
-							if (shape.getBounds().contains(p) &&  shape != selected) {
-								setSelected(shape);
-								break;
-							}
-						} 
 					}
 				}
-		
 			}
+
+			@Override
+			public void mouseMoved(MouseEvent e)
+			{
+			}
+			
+		});
+		this.addMouseListener(new MouseListener() {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				//Allows user to select shape in background by double clicking
+				if (e.getClickCount() > 1) {
+					for (DShape s : shapes) {
+						Rectangle bounds = s.getBounds();
+						if (bounds.contains(e.getPoint()) && s != selected) {
+							selected = s;
+							break;
+						}
+					}
+				}
+				else {
+					for (DShape s : shapes) {
+						Rectangle bounds = s.getBounds();
+						if (bounds.contains(e.getPoint())) {
+							selected = s;
+						}
+					}
+				}
+				
+				repaint();
+				
 			}
-			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
 			@Override
 			public void mouseExited(MouseEvent e) {	
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
 			}
-		};
-		
-		this.addMouseListener(mouseListener);
+		});
 		shapes = new ArrayList<>();
 	}
 
@@ -94,10 +101,12 @@ public class Canvas extends JPanel
 	public void addShape(DShapeModel shapeModel) {
 		DShape theShape;
 		if (shapeModel instanceof DRectModel) {
-			theShape = new DRect((DRectModel) shapeModel);
+			theShape = new DRect();
+			theShape.setModel(shapeModel);
 		}
 		else if (shapeModel instanceof DOvalModel) {
-			theShape = new DOVal((DOvalModel) shapeModel);
+			theShape = new DOVal();
+			theShape.setModel(shapeModel);
 		}
 		else if (shapeModel instanceof DTextModel) {
 			theShape = new DText(); 
