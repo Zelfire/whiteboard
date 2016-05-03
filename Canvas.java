@@ -17,17 +17,17 @@ public class Canvas extends JPanel
 		setPreferredSize(new Dimension(INITIAL_WIDTH, INITIAL_HEIGHT));
 		setBackground(Color.WHITE);
 		this.addMouseMotionListener(new MouseMotionListener() {
-
+			
 			@Override
 			public void mouseDragged(MouseEvent e)
 			{
-				if (selected != null) {
-					if (selected.getBounds().contains(e.getPoint())) {
-						DShapeModel selectedModel = selected.getModel();
-						selectedModel.setX(e.getX() - preXGap);
-						selectedModel.setY(e.getY() - preYGap);
-					}
-				}
+				if (selected != null) { 
+					if (selected.getBounds().contains(e.getPoint())) { 
+						DShapeModel selectedModel = selected.getModel(); 
+					    selectedModel.setX(e.getX() - preXGap); 
+					    selectedModel.setY(e.getY() - preYGap); 
+		 			} 
+				} 
 			}
 
 			@Override
