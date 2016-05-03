@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.ArrayList;
 
 public abstract class DShape implements ModelListener
 {
@@ -54,5 +55,18 @@ public abstract class DShape implements ModelListener
 	public DShapeModel getModel()
 	{
 		return shapeModel;
+	}
+	
+	public ArrayList<Point> getKnobs() {
+		ArrayList<Point> knobs = new ArrayList<>();
+		Point upperLeft = new Point(getX(), getY());
+		Point upperRight = new Point(getX() + getWidth(), getY());
+		Point bottomLeft = new Point(getX(), getY() + getHeight());
+		Point bottomRight = new Point(getX() + getWidth(), getY() + getHeight());
+		knobs.add(upperLeft);
+		knobs.add(upperRight);
+		knobs.add(bottomLeft);
+		knobs.add(bottomRight);
+		return knobs;
 	}
 }

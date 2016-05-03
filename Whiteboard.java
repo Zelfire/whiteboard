@@ -21,12 +21,11 @@ public class Whiteboard extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				DShapeModel rectangle = new DRectModel();
-				//Temporary values for testing purposes
-				rectangle.setX(100);
-				rectangle.setY(100);
-				rectangle.setWidth(100);
-				rectangle.setHeight(100);
-				rectangle.setColor(Color.RED);
+				rectangle.setX(10);
+				rectangle.setY(10);
+				rectangle.setWidth(200);
+				rectangle.setHeight(200);
+				rectangle.setColor(Color.GRAY);
 				canvas.addShape(rectangle);
 			}
 		});
@@ -35,11 +34,10 @@ public class Whiteboard extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				DShapeModel oval = new DOvalModel();
-				//Temporary values for testing purposes
-				oval.setX(200);
-				oval.setY(200);
-				oval.setWidth(200);
-				oval.setHeight(200);
+				oval.setX(10);
+				oval.setY(10);
+				oval.setWidth(20);
+				oval.setHeight(20);
 				oval.setColor(Color.GRAY);
 				canvas.addShape(oval);
 			}
@@ -108,11 +106,13 @@ public class Whiteboard extends JFrame
 			} 
 		}; 
 		JTable shapeInfo = new JTable(tmodel);
-		shapeInfo.setMinimumSize(new Dimension()); 
 		tmodel.addColumn("X"); 
 		tmodel.addColumn("Y");
 		tmodel.addColumn("WIDTH");
 		tmodel.addColumn("HEIGHT");
+		
+		JScrollPane tableScroller = new JScrollPane(shapeInfo);
+		tableScroller.setPreferredSize(new Dimension());
 		
 		Box controlsBox = Box.createVerticalBox();
 		controlsBox.add(Box.createVerticalStrut(20));
@@ -124,7 +124,7 @@ public class Whiteboard extends JFrame
 		controlsBox.add(Box.createVerticalStrut(20));
 		controlsBox.add(moveBox);
 		controlsBox.add(Box.createVerticalStrut(20));
-		controlsBox.add(new JScrollPane(shapeInfo));
+		controlsBox.add(tableScroller);
 		add(controlsBox, BorderLayout.WEST);
 		
 		//Align controls to the left

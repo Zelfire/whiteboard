@@ -85,24 +85,16 @@ public class Canvas extends JPanel
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
 		for (DShape shape : shapes) {
 			shape.draw(g);
-			if (shape.equals(selected))
-			{
-				Rectangle bound = shape.getBounds();
-				g.setColor(Color.green);
-				int offset = 6;
-				if (shape instanceof DOVal)
-				{
-					g.drawOval(bound.x - (offset/2), bound.y - (offset/2), bound.width + offset, bound.height + offset);
-				}
-				else
-				{
-					g.drawRect(bound.x - (offset/2), bound.y - (offset/2), bound.width + offset, bound.height + offset);
+			if (shape.equals(selected)) {
+				final int KNOB_SIZE = 9;
+				ArrayList<Point> knobs = shape.getKnobs();
+				g.setColor(Color.BLACK);
+				for (int i = 0; i < knobs.size(); i++) {
+					g.fillRect(knobs.get(i).x - KNOB_SIZE / 2, knobs.get(i).y - KNOB_SIZE / 2, KNOB_SIZE, KNOB_SIZE);	
 				}
 			}
-			
 		}
 	}
 	
