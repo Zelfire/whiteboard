@@ -11,74 +11,83 @@ public class Canvas extends JPanel
 	private int preXGap; //preXGap and preYGap should probably be moved someplace else
 	private int preYGap;
 	
+	private class CanvasMouseListener implements MouseListener, MouseMotionListener
+	{	
+		
+		private int preXGap; //preXGap and preYGap should probably be moved someplace else
+		private int preYGap;
+		private boolean moving = false;
+		
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			if (moving)
+			{
+				DShapeModel selectedModel = selected.getModel(); 
+				selectedModel.setX(e.getX() - preXGap); 
+			    selectedModel.setY(e.getY() - preYGap);
+			}
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent e) {
+			//Allows user to select shape in background by double clicking
+			if (e.getClickCount() > 1) {
+				for (DShape s : shapes) {
+					Rectangle bounds = s.getBounds();
+					if (bounds.contains(e.getPoint()) && s != selected) {
+						setSelected(s);
+						break;
+					}
+				}
+			}
+			//Else select front-most shape
+			else {
+				for (DShape s : shapes) {
+					Rectangle bounds = s.getBounds();
+					if (bounds.contains(e.getPoint())) {
+						setSelected(s);
+					}
+				}
+			}
+			
+			//Set the distance between the clicked point and the bounded rectangle of the shape (Used for shape movement when dragging mouse)
+			if (selected.getBounds().contains(e.getPoint())) {
+				preXGap = e.getX() - selected.getX();
+				preYGap = e.getY() - selected.getY();
+				moving = true;
+			}
+		}
+		
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			moving = false;
+		}
+		
+		@Override
+		public void mouseEntered(MouseEvent e) {
+		}
+		
+		@Override
+		public void mouseExited(MouseEvent e) {
+		}
+		
+		@Override
+		public void mouseMoved(MouseEvent e) {
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {	
+		}
+	}
+	
 	public Canvas() {
 		int INITIAL_WIDTH = 400;
 		int INITIAL_HEIGHT = 400;
 		setPreferredSize(new Dimension(INITIAL_WIDTH, INITIAL_HEIGHT));
 		setBackground(Color.WHITE);
-		this.addMouseMotionListener(new MouseMotionListener() {
-			
-			@Override
-			public void mouseDragged(MouseEvent e)
-			{
-				if (selected != null) { 
-					if (selected.getBounds().contains(e.getPoint())) { 
-						DShapeModel selectedModel = selected.getModel(); 
-					    selectedModel.setX(e.getX() - preXGap); 
-					    selectedModel.setY(e.getY() - preYGap); 
-		 			} 
-				} 
-			}
-
-			@Override
-			public void mouseMoved(MouseEvent e)
-			{
-			}
-			
-		});
-		this.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
-			@Override
-			public void mousePressed(MouseEvent e) {
-				//Allows user to select shape in background by double clicking
-				if (e.getClickCount() > 1) {
-					for (DShape s : shapes) {
-						Rectangle bounds = s.getBounds();
-						if (bounds.contains(e.getPoint()) && s != selected) {
-							setSelected(s);
-							break;
-						}
-					}
-				}
-				//Else select front-most shape
-				else {
-					for (DShape s : shapes) {
-						Rectangle bounds = s.getBounds();
-						if (bounds.contains(e.getPoint())) {
-							setSelected(s);
-						}
-					}
-				}
-				
-				//Set the distance between the clicked point and the bounded rectangle of the shape (Used for shape movement when dragging mouse)
-				if (selected.getBounds().contains(e.getPoint())) {
-					preXGap = e.getX() - selected.getX();
-					preYGap = e.getY() - selected.getY();	
-				}
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {	
-			}
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-		});
+		CanvasMouseListener mouseListener = new CanvasMouseListener();
+		this.addMouseMotionListener(mouseListener);
+		this.addMouseListener(mouseListener);
 		shapes = new ArrayList<>();
 	}
 
