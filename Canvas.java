@@ -9,7 +9,6 @@ public class Canvas extends JPanel
 	private ArrayList<DShape> shapes;
 	private DShape selected;
 	
-	
 	private class CanvasMouseListener implements MouseListener, MouseMotionListener
 	{	
 		
@@ -93,9 +92,7 @@ public class Canvas extends JPanel
 				}
 			}
 			
-			//Set the distance between the clicked point and the bounded rectangle of the shape (Used for shape movement when dragging mouse)
-			
-			if (selected.getBiggerBounds().contains(e.getPoint())) {
+			if (selected != null && selected.getBiggerBounds().contains(e.getPoint())) {
 				
 				if (selected.getBounds().contains(e.getPoint())) {
 					moving = true;
@@ -232,7 +229,7 @@ public class Canvas extends JPanel
 		return selected;
 	}
 	
-	public void setSelected(DShape shape)
+	private void setSelected(DShape shape)
 	{
 		selected = shape;
 		repaint();
@@ -265,4 +262,7 @@ public class Canvas extends JPanel
 		}
 	}
 	
+	public ArrayList<DShape> getShapes() {
+		return shapes;
+	}
 }
