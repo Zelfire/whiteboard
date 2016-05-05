@@ -93,9 +93,7 @@ public class Whiteboard extends JFrame
 		moveBox.add(removeShapeBtn);
 		
 		tmodel = new ShapeTableModel();
-		CanvasAdapter adapter = new CanvasAdapter();
-		adapter.setCanvas(canvas);
-		tmodel.setAdapter(adapter);
+		tmodel.setCanvas(canvas);
 		JTable shapeInfo = new JTable(tmodel);
 		
 		JScrollPane tableScroller = new JScrollPane(shapeInfo);

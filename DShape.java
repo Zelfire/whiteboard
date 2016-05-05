@@ -73,7 +73,7 @@ public abstract class DShape implements ModelListener
 	public Rectangle getBiggerBounds()
 	{
 		Rectangle smallBounds = this.getBounds();
-		int knobSize = 9;
+		int knobSize = Canvas.KNOB_SIZE;
 		return new Rectangle (smallBounds.x - knobSize/2, smallBounds.y - knobSize/2, smallBounds.width + knobSize, smallBounds.height+knobSize);
 	}
 }

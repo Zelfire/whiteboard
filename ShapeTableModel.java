@@ -4,14 +4,14 @@ import javax.swing.table.AbstractTableModel;
 
 public class ShapeTableModel extends AbstractTableModel implements ModelListener
 {
-	private CanvasAdapter adapter;
+	private Canvas canvas;
 	private static final int NUM_COLUMNS = 4;
 	private static final int X_COLUMN = 0;
 	private static final int Y_COLUMN = 1;
 	private static final int WIDTH_COLUMN = 2;
 	
 	public ShapeTableModel() {
-		adapter = null;
+		canvas = null;
 	}
 
 	@Override
@@ -26,8 +26,8 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
 			return "HEIGHT";
 	}
 	
-	public void setAdapter(CanvasAdapter adapter) {
-		this.adapter = adapter;
+	public void setCanvas(Canvas canvas) {
+		this.canvas = canvas;
 	}
 	
 	@Override
@@ -39,8 +39,8 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
 	@Override
 	public int getRowCount()
 	{
-		if (adapter != null)
-			return adapter.size();
+		if (canvas != null)
+			return canvas.getShapes().size();
 		else
 			return 0;
 	}
@@ -48,7 +48,7 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
 	@Override
 	public Object getValueAt(int x, int y)
 	{
-		DShapeModel model = adapter.get(x).getModel();
+		DShapeModel model = canvas.getShapes().get(x).getModel();
 		if (y == X_COLUMN)
 			return model.getX();
 		else if (y == Y_COLUMN)
@@ -62,7 +62,7 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
 	@Override
 	public void modelChanged(DShapeModel model)
 	{
-		ArrayList<DShape> shapes = adapter.getShapes();
+		ArrayList<DShape> shapes = canvas.getShapes();
 		for (int i = 0; i < shapes.size(); i++) {
 			if (shapes.get(i).getModel() == model)
 				fireTableRowsUpdated(i, i);
