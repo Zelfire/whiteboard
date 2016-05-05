@@ -6,12 +6,15 @@ import javax.swing.table.DefaultTableModel;
 
 public class Whiteboard extends JFrame
 {
+	private ShapeTableModel tmodel;
+	private Canvas canvas;
+	
 	public Whiteboard() {
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		//Add the canvas
-		Canvas canvas = new Canvas();
+		canvas = new Canvas();
 		add(canvas, BorderLayout.CENTER);
 		
 		//Add the controls
@@ -21,12 +24,7 @@ public class Whiteboard extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				DShapeModel rectangle = new DRectModel();
-				rectangle.setX(10);
-				rectangle.setY(10);
-				rectangle.setWidth(200);
-				rectangle.setHeight(200);
-				rectangle.setColor(Color.GRAY);
-				canvas.addShape(rectangle);
+				addShape(rectangle);
 			}
 		});
 		JButton ovalButton = new JButton("Oval");
@@ -34,12 +32,7 @@ public class Whiteboard extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				DShapeModel oval = new DOvalModel();
-				oval.setX(10);
-				oval.setY(10);
-				oval.setWidth(20);
-				oval.setHeight(20);
-				oval.setColor(Color.GRAY);
-				canvas.addShape(oval);
+				addShape(oval);
 			}
 		});
 		JButton lineButton = new JButton("Line");
@@ -91,25 +84,19 @@ public class Whiteboard extends JFrame
 		removeShapeBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				canvas.removeShape();
+				removeShape();
 			}
 		});
 		Box moveBox = Box.createHorizontalBox();
 		moveBox.add(moveToFrontBtn);
 		moveBox.add(moveToBackBtn);
 		moveBox.add(removeShapeBtn);
-
-		DefaultTableModel tmodel = new DefaultTableModel(){
-			@Override 
-			public boolean isCellEditable(int row, int column) { 
-				return false; 
-			} 
-		}; 
+		
+		tmodel = new ShapeTableModel();
+		CanvasAdapter adapter = new CanvasAdapter();
+		adapter.setCanvas(canvas);
+		tmodel.setAdapter(adapter);
 		JTable shapeInfo = new JTable(tmodel);
-		tmodel.addColumn("X"); 
-		tmodel.addColumn("Y");
-		tmodel.addColumn("WIDTH");
-		tmodel.addColumn("HEIGHT");
 		
 		JScrollPane tableScroller = new JScrollPane(shapeInfo);
 		tableScroller.setPreferredSize(new Dimension());
@@ -134,6 +121,26 @@ public class Whiteboard extends JFrame
 		
 		pack();
 		setVisible(true);
+	}
+
+
+	private void addShape(DShapeModel model)
+	{
+		model.setX(10);
+		model.setY(10);
+		model.setWidth(20);
+		model.setHeight(20);
+		model.setColor(Color.GRAY);
+		canvas.addShape(model);
+		model.addModelListener(tmodel);
+		tmodel.fireTableDataChanged();
+	}
+
+
+	private void removeShape()
+	{
+		canvas.removeShape();
+		tmodel.fireTableDataChanged();
 	}
 	
 	public static void main(String[] args) {
