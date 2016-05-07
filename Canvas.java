@@ -8,6 +8,8 @@ public class Canvas extends JPanel
 {
 	private ArrayList<DShape> shapes;
 	private DShape selected;
+
+	public static final int KNOB_SIZE = 9;
 	
 	private class CanvasMouseListener implements MouseListener, MouseMotionListener
 	{	
@@ -105,7 +107,6 @@ public class Canvas extends JPanel
 				{
 					Point resizePoint = e.getPoint();
 					Point anchorPoint = new Point();
-					final int KNOB_SIZE = 9;
 					boolean left = resizePoint.x > selected.getX() - KNOB_SIZE/2 && resizePoint.x < selected.getX() + KNOB_SIZE/2;
 					boolean right = resizePoint.x > selected.getX() + selected.getWidth() - KNOB_SIZE/2 && resizePoint.x < selected.getX() + selected.getWidth() + KNOB_SIZE/2;
 					boolean top = resizePoint.y > selected.getY() - KNOB_SIZE/2 && resizePoint.y < selected.getY() + KNOB_SIZE/2;
@@ -192,7 +193,6 @@ public class Canvas extends JPanel
 		for (DShape shape : shapes) {
 			shape.draw(g);
 			if (shape.equals(selected)) {
-				final int KNOB_SIZE = 9;
 				ArrayList<Point> knobs = shape.getKnobs();
 				g.setColor(Color.BLACK);
 				for (int i = 0; i < knobs.size(); i++) {

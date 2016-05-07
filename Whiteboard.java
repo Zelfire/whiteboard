@@ -1,8 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
-
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 public class Whiteboard extends JFrame
 {
@@ -78,14 +76,14 @@ public class Whiteboard extends JFrame
 		moveToFrontBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				canvas.moveToFront();
+				moveToFront();
 			}
 		});
 		JButton moveToBackBtn = new JButton("Move to Back");
 		moveToBackBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				canvas.moveToBack();
+				moveToBack();
 			}
 		});
 		JButton removeShapeBtn = new JButton("Remove Shape");
@@ -101,9 +99,7 @@ public class Whiteboard extends JFrame
 		moveBox.add(removeShapeBtn);
 		
 		tmodel = new ShapeTableModel();
-		CanvasAdapter adapter = new CanvasAdapter();
-		adapter.setCanvas(canvas);
-		tmodel.setAdapter(adapter);
+		tmodel.setCanvas(canvas);
 		JTable shapeInfo = new JTable(tmodel);
 		
 		JScrollPane tableScroller = new JScrollPane(shapeInfo);
@@ -148,6 +144,19 @@ public class Whiteboard extends JFrame
 	private void removeShape()
 	{
 		canvas.removeShape();
+		tmodel.fireTableDataChanged();
+	}
+	
+
+	private void moveToBack()
+	{
+		canvas.moveToBack();
+		tmodel.fireTableDataChanged();
+	}
+
+	private void moveToFront()
+	{
+		canvas.moveToFront();
 		tmodel.fireTableDataChanged();
 	}
 	
