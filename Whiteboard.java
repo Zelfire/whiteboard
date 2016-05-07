@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 
 public class Whiteboard extends JFrame
 {
@@ -14,6 +17,56 @@ public class Whiteboard extends JFrame
 		//Add the canvas
 		canvas = new Canvas();
 		add(canvas, BorderLayout.CENTER);
+		
+		//Add the file menu
+		JMenuBar menuBar = new JMenuBar();
+		JMenu fileMenu = new JMenu("File");
+		menuBar.add(fileMenu);
+
+		JMenuItem save = new JMenuItem("Save");
+		save.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent event)
+			{
+				//Prompt the user for a filename
+				String filename = JOptionPane.showInputDialog("File name", null);
+				canvas.save(new File(filename + ".xml"));
+			}
+		});
+		fileMenu.add(save);
+		
+		JMenuItem open = new JMenuItem("Open");
+		open.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				//Open file chooser
+				JFileChooser chooser = new JFileChooser();
+				chooser.setAcceptAllFileFilterUsed(false);
+				chooser.addChoosableFileFilter(new FileFilter() {
+					@Override
+					public boolean accept(File f)
+					{
+						String filename = f.getName().toLowerCase();
+						return filename.endsWith(".xml") || f.isDirectory();
+					}
+					@Override
+					public String getDescription()
+					{
+						return ".xml";
+					}
+					
+				});
+				chooser.showOpenDialog(Whiteboard.this);
+				File selectedFile = chooser.getSelectedFile();
+				if (selectedFile != null) {
+					canvas.open(selectedFile);
+					tmodel.fireTableDataChanged();
+				}
+			}
+		});
+		fileMenu.add(open);
+		setJMenuBar(menuBar);
 		
 		//Add the controls
 		JLabel addLabel = new JLabel("Add: ");

@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.*;
+import java.io.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -267,5 +269,42 @@ public class Canvas extends JPanel
 	
 	public ArrayList<DShape> getShapes() {
 		return shapes;
+	}
+	
+	public void save(File f) {
+		try {
+			XMLEncoder out = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(f)));
+			DShapeModel[] outputShapes = new DShapeModel[shapes.size()];
+			for (int i = 0; i < outputShapes.length; i++) {
+				outputShapes[i] = shapes.get(i).getModel();
+			}
+			out.writeObject(outputShapes);
+			out.flush();
+			out.close();
+		}
+		catch (FileNotFoundException e) {
+			
+		}
+	}
+	
+	public void open(File f) {
+		try {
+			XMLDecoder in = new XMLDecoder(new BufferedInputStream(new FileInputStream(f)));
+			DShapeModel[] inputShapes = (DShapeModel[]) in.readObject();
+			clear();
+			for (DShapeModel shape : inputShapes) {
+				addShape(shape);
+			}
+			in.close();
+		}
+		catch (FileNotFoundException e) {
+			
+		}
+	}
+
+	private void clear()
+	{
+		shapes.clear();
+		repaint();
 	}
 }
