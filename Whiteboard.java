@@ -7,7 +7,6 @@ import javax.swing.filechooser.FileFilter;
 
 public class Whiteboard extends JFrame
 {
-	private ShapeTableModel tmodel;
 	private Canvas canvas;
 	
 	public Whiteboard() {
@@ -61,7 +60,6 @@ public class Whiteboard extends JFrame
 				File selectedFile = chooser.getSelectedFile();
 				if (selectedFile != null) {
 					canvas.open(selectedFile);
-					tmodel.fireTableDataChanged();
 				}
 			}
 		});
@@ -129,21 +127,21 @@ public class Whiteboard extends JFrame
 		moveToFrontBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				moveToFront();
+				canvas.moveToFront();
 			}
 		});
 		JButton moveToBackBtn = new JButton("Move to Back");
 		moveToBackBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				moveToBack();
+				canvas.moveToBack();
 			}
 		});
 		JButton removeShapeBtn = new JButton("Remove Shape");
 		removeShapeBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				removeShape();
+				canvas.removeShape();
 			}
 		});
 		Box moveBox = Box.createHorizontalBox();
@@ -151,9 +149,7 @@ public class Whiteboard extends JFrame
 		moveBox.add(moveToBackBtn);
 		moveBox.add(removeShapeBtn);
 		
-		tmodel = new ShapeTableModel();
-		tmodel.setCanvas(canvas);
-		JTable shapeInfo = new JTable(tmodel);
+		JTable shapeInfo = new JTable(canvas.getTableModel());
 		
 		JScrollPane tableScroller = new JScrollPane(shapeInfo);
 		tableScroller.setPreferredSize(new Dimension());
@@ -189,30 +185,8 @@ public class Whiteboard extends JFrame
 		model.setHeight(20);
 		model.setColor(Color.GRAY);
 		canvas.addShape(model);
-		model.addModelListener(tmodel);
-		tmodel.fireTableDataChanged();
 	}
 
-
-	private void removeShape()
-	{
-		canvas.removeShape();
-		tmodel.fireTableDataChanged();
-	}
-	
-
-	private void moveToBack()
-	{
-		canvas.moveToBack();
-		tmodel.fireTableDataChanged();
-	}
-
-	private void moveToFront()
-	{
-		canvas.moveToFront();
-		tmodel.fireTableDataChanged();
-	}
-	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable()
 		{

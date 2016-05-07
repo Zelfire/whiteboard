@@ -5,11 +5,13 @@ import java.io.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
 
 public class Canvas extends JPanel
 {
 	private ArrayList<DShape> shapes;
 	private DShape selected;
+	private ShapeTableModel tmodel;
 
 	public static final int KNOB_SIZE = 9;
 	
@@ -186,6 +188,8 @@ public class Canvas extends JPanel
 		this.addMouseMotionListener(mouseListener);
 		this.addMouseListener(mouseListener);
 		shapes = new ArrayList<>();
+		tmodel = new ShapeTableModel();
+		tmodel.setCanvas(this);
 	}
 
 	@Override
@@ -219,11 +223,13 @@ public class Canvas extends JPanel
 		else{
 			theShape = new DLine();
 		}
+		shapeModel.addModelListener(tmodel);
 		theShape.setModel(shapeModel);
 		theShape.attachView(this);
 		shapes.add(theShape);
 		selected = theShape;
 		repaint();
+		tmodel.fireTableDataChanged();
 	}
 	
 	public DShape getSelected()
@@ -246,6 +252,7 @@ public class Canvas extends JPanel
 			else
 				selected = null;
 			repaint();	
+			tmodel.fireTableDataChanged();
 		}
 	}
 	
@@ -255,6 +262,7 @@ public class Canvas extends JPanel
 			shapes.remove(selected);
 			shapes.add(shapes.size(), selected);
 			repaint();	
+			tmodel.fireTableDataChanged();
 		}
 	}
 
@@ -264,6 +272,7 @@ public class Canvas extends JPanel
 			shapes.remove(selected);
 			shapes.add(0, selected);
 			repaint();
+			tmodel.fireTableDataChanged();
 		}
 	}
 	
@@ -295,6 +304,7 @@ public class Canvas extends JPanel
 			for (DShapeModel shape : inputShapes) {
 				addShape(shape);
 			}
+			tmodel.fireTableDataChanged();
 			in.close();
 		}
 		catch (FileNotFoundException e) {
@@ -305,6 +315,12 @@ public class Canvas extends JPanel
 	private void clear()
 	{
 		shapes.clear();
+		tmodel.fireTableDataChanged();
 		repaint();
+	}
+
+	public TableModel getTableModel()
+	{
+		return tmodel;
 	}
 }
