@@ -14,7 +14,6 @@ public class Canvas extends JPanel
 		
 		private int preXGap; 
 		private int preYGap;
-		private Point anchorPoint;
 		private boolean moving = false;
 		private boolean resizingHorizontally = false;
 		private boolean resizingVertically = false;
@@ -24,13 +23,14 @@ public class Canvas extends JPanel
 		public void mouseDragged(MouseEvent e) {
 			if (selected != null) {
 				DShapeModel selectedModel = selected.getModel();
+				Point anchorPoint = selectedModel.getAnchor();
 				if (moving) {
 					selectedModel.setX(e.getX() - preXGap);
 					selectedModel.setY(e.getY() - preYGap);
 				} else if (resizingHorizontally || resizingVertically) {
 					
-					int newWidth = Math.abs(e.getX() - anchorPoint.x);
-					int newHeight = Math.abs(e.getY() - anchorPoint.y);
+					int newWidth = e.getX() - anchorPoint.x;
+					int newHeight = e.getY() - anchorPoint.y;
 					if(resizingHorizontally)
 					{
 						selectedModel.setWidth(newWidth);
@@ -96,40 +96,41 @@ public class Canvas extends JPanel
 				
 				if (selected.getBounds().contains(e.getPoint())) {
 					moving = true;
+					setCursor(new Cursor(Cursor.MOVE_CURSOR));
+					cursorChange = true;
 					preXGap = e.getX() - selected.getX();
 					preYGap = e.getY() - selected.getY();
 				}
 				else
 				{
 					Point resizePoint = e.getPoint();
-					anchorPoint = new Point();
+					Point anchorPoint = new Point();
 					final int KNOB_SIZE = 9;
 					boolean left = resizePoint.x > selected.getX() - KNOB_SIZE/2 && resizePoint.x < selected.getX() + KNOB_SIZE/2;
 					boolean right = resizePoint.x > selected.getX() + selected.getWidth() - KNOB_SIZE/2 && resizePoint.x < selected.getX() + selected.getWidth() + KNOB_SIZE/2;
 					boolean top = resizePoint.y > selected.getY() - KNOB_SIZE/2 && resizePoint.y < selected.getY() + KNOB_SIZE/2;
 					boolean bottom = resizePoint.y > selected.getY() + selected.getHeight() - KNOB_SIZE/2 && resizePoint.y < selected.getY() + selected.getHeight() + KNOB_SIZE/2;
+					resizingHorizontally = left || right;
+					resizingVertically = top || bottom;
 					if (left)
 					{
 						anchorPoint.x = selected.getX() + selected.getWidth();
-						resizingHorizontally = true;
 					}
 					else if (right)
 					{
 						anchorPoint.x = selected.getX();
-						resizingHorizontally = true;
 					}
 					if (top)
 					{
 						anchorPoint.y = selected.getY() + selected.getHeight();
-						resizingVertically = true;
 					}
 					else if (bottom)
 					{
 						anchorPoint.y = selected.getY();
-						resizingVertically = true;
 					}
-					preXGap = resizePoint.x - anchorPoint.x;
-					preYGap = resizePoint.y - anchorPoint.y;
+					selected.getModel().setAnchor(anchorPoint);
+					preXGap = (left) ?  selected.getWidth() * -1 : selected.getWidth();
+					preYGap = (top)? selected.getHeight() * -1 : selected.getHeight();
 				}
 			}
 		}
@@ -140,6 +141,7 @@ public class Canvas extends JPanel
 			moving = false;
 			resizingHorizontally = false;
 			resizingVertically = false;
+			if (cursorChange) {setCursor(new Cursor(Cursor.DEFAULT_CURSOR));}
 		}
 		
 		@Override
@@ -206,11 +208,9 @@ public class Canvas extends JPanel
 		DShape theShape;
 		if (shapeModel instanceof DRectModel) {
 			theShape = new DRect();
-			theShape.setModel(shapeModel);
 		}
 		else if (shapeModel instanceof DOvalModel) {
 			theShape = new DOVal();
-			theShape.setModel(shapeModel);
 		}
 		else if (shapeModel instanceof DTextModel) {
 			theShape = new DText(); 
@@ -218,6 +218,7 @@ public class Canvas extends JPanel
 		else{
 			theShape = new DLine();
 		}
+		theShape.setModel(shapeModel);
 		theShape.attachView(this);
 		shapes.add(theShape);
 		selected = theShape;
@@ -239,7 +240,10 @@ public class Canvas extends JPanel
 	{
 		if (selected != null) {
 			shapes.remove(selected);
-			selected = null;
+			if (shapes.size() > 0)
+				selected = shapes.get(shapes.size() -1);
+			else
+				selected = null;
 			repaint();	
 		}
 	}

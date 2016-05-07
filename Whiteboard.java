@@ -36,6 +36,14 @@ public class Whiteboard extends JFrame
 			}
 		});
 		JButton lineButton = new JButton("Line");
+		lineButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				DShapeModel line = new DLineModel();
+				addShape(line);
+			}
+		});
 		JButton textButton = new JButton("Text");
 		Box shapesBox = Box.createHorizontalBox();
 		shapesBox.add(addLabel);

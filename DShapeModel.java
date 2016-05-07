@@ -6,6 +6,7 @@ public class DShapeModel
 {
 	private Rectangle bound;
 	private Color color;
+	private Point anchor;
 	private ArrayList<ModelListener> listeners;
 	
 	public DShapeModel() {
@@ -50,12 +51,12 @@ public class DShapeModel
 	}
 	
 	public void setWidth(int newWidth) {
-		bound.width = newWidth;
+		bound.width = Math.abs(newWidth);
 		notifyListeners();
 	}
 	
 	public void setHeight(int newHeight) {
-		bound.height = newHeight;
+		bound.height = Math.abs(newHeight);
 		notifyListeners();
 	}
 	
@@ -71,6 +72,16 @@ public class DShapeModel
 	
 	public void removeModelListener(ModelListener listener) {
 		listeners.remove(listener);
+	}
+	
+	public void setAnchor(Point p)
+	{
+		anchor = p;
+	}
+	
+	public Point getAnchor()
+	{
+		return anchor;
 	}
 	
 	private void notifyListeners()
