@@ -1,9 +1,11 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.beans.*;
 import java.io.*;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.TableModel;
 
@@ -280,36 +282,38 @@ public class Canvas extends JPanel
 		return shapes;
 	}
 	
-	public void save(File f) {
-		try {
-			XMLEncoder out = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(f)));
-			DShapeModel[] outputShapes = new DShapeModel[shapes.size()];
-			for (int i = 0; i < outputShapes.length; i++) {
-				outputShapes[i] = shapes.get(i).getModel();
-			}
-			out.writeObject(outputShapes);
-			out.flush();
-			out.close();
+	public void save(File f) throws FileNotFoundException{
+		XMLEncoder out = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(f)));
+		DShapeModel[] outputShapes = new DShapeModel[shapes.size()];
+		for (int i = 0; i < outputShapes.length; i++) {
+			outputShapes[i] = shapes.get(i).getModel();
 		}
-		catch (FileNotFoundException e) {
-			
-		}
+		out.writeObject(outputShapes);
+		out.flush();
+		out.close();
 	}
 	
-	public void open(File f) {
-		try {
-			XMLDecoder in = new XMLDecoder(new BufferedInputStream(new FileInputStream(f)));
-			DShapeModel[] inputShapes = (DShapeModel[]) in.readObject();
-			clear();
-			for (DShapeModel shape : inputShapes) {
-				addShape(shape);
-			}
-			tmodel.fireTableDataChanged();
-			in.close();
+	public void open(File f) throws FileNotFoundException{
+		XMLDecoder in = new XMLDecoder(new BufferedInputStream(new FileInputStream(f)));
+		DShapeModel[] inputShapes = (DShapeModel[]) in.readObject();
+		clear();
+		for (DShapeModel shape : inputShapes) {
+			addShape(shape);
 		}
-		catch (FileNotFoundException e) {
-			
-		}
+		tmodel.fireTableDataChanged();
+		in.close();
+	}
+	
+	public void saveAsPNG(File f) throws IOException {
+		DShape tempSelected = selected;
+		selected = null; //Get rid of knobs temporarily
+		repaint();
+		BufferedImage image = (BufferedImage) createImage(getWidth(), getHeight());
+        Graphics g = image.getGraphics();
+        paintAll(g);
+        g.dispose();
+        ImageIO.write(image, "PNG", f);
+        selected = tempSelected; //Restore knobs
 	}
 
 	private void clear()

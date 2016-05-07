@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -30,7 +32,12 @@ public class Whiteboard extends JFrame
 			{
 				//Prompt the user for a filename
 				String filename = JOptionPane.showInputDialog("File name", null);
-				canvas.save(new File(filename + ".xml"));
+				try {
+					canvas.save(new File(filename + ".xml"));
+				}
+				catch (FileNotFoundException e) {
+					JOptionPane.showMessageDialog(null, "File not found!", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		fileMenu.add(save);
@@ -58,12 +65,35 @@ public class Whiteboard extends JFrame
 				});
 				chooser.showOpenDialog(Whiteboard.this);
 				File selectedFile = chooser.getSelectedFile();
-				if (selectedFile != null) {
+				try {
 					canvas.open(selectedFile);
+				}
+				catch(FileNotFoundException e) {
+					JOptionPane.showMessageDialog(null, "File not found!", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
 		fileMenu.add(open);
+		
+		JMenuItem savePNG = new JMenuItem("Save as PNG");
+		savePNG.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//Prompt the user for a filename
+				String filename = JOptionPane.showInputDialog("File name", null);
+				try
+				{
+					canvas.saveAsPNG(new File(filename + ".png"));
+				}
+				catch (IOException e1)
+				{
+					JOptionPane.showMessageDialog(null, "An error occured while saving the file", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		fileMenu.add(savePNG);
+		
+		
 		setJMenuBar(menuBar);
 		
 		//Add the controls
