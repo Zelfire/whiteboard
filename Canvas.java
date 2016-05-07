@@ -25,12 +25,11 @@ public class Canvas extends JPanel
 		public void mouseDragged(MouseEvent e) {
 			if (selected != null) {
 				DShapeModel selectedModel = selected.getModel();
-				Point anchorPoint = selectedModel.getAnchor();
 				if (moving) {
 					selectedModel.setX(e.getX() - preXGap);
 					selectedModel.setY(e.getY() - preYGap);
 				} else if (resizingHorizontally || resizingVertically) {
-					
+					Point anchorPoint = selectedModel.getAnchor();
 					int newWidth = e.getX() - anchorPoint.x;
 					int newHeight = e.getY() - anchorPoint.y;
 					if(resizingHorizontally)
