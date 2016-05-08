@@ -277,6 +277,12 @@ public class Canvas extends JPanel
 			tmodel.fireTableDataChanged();
 		}
 	}
+	public void updateTextShape(String txt)
+	{
+	    if (selected != null) {
+	        System.out.println(txt);
+	    }
+	}
 	
 	public ArrayList<DShape> getShapes() {
 		return shapes;

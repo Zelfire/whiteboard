@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
 public class Whiteboard extends JFrame
@@ -124,6 +126,14 @@ public class Whiteboard extends JFrame
 			}
 		});
 		JButton textButton = new JButton("Text");
+		textButton.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DShapeModel text = new DTextModel();
+                addShape(text);
+            }
+        });
 		Box shapesBox = Box.createHorizontalBox();
 		shapesBox.add(addLabel);
 		shapesBox.add(rectButton);
@@ -146,8 +156,21 @@ public class Whiteboard extends JFrame
 		
 		JTextField textInput = new JTextField();
 		textInput.setMaximumSize(new Dimension(100, textInput.getPreferredSize().height)); //Temporary size for now
+		textInput.getDocument().addDocumentListener(new DocumentListener() {
+		    public void changedUpdate(DocumentEvent e) {
+		        canvas.updateTextShape(textInput.getText());
+		    }
+		    public void removeUpdate(DocumentEvent e) {
+		        canvas.updateTextShape(textInput.getText());
+		    }
+		    public void insertUpdate(DocumentEvent e) {
+		        canvas.updateTextShape(textInput.getText());
+		    }
+		});
+		
 		JComboBox<String> fonts = new JComboBox<>();
 		fonts.setMaximumSize(new Dimension(100, textInput.getPreferredSize().height)); //Temporary size for now
+		
 		Box textBox = Box.createHorizontalBox();
 		textBox.add(textInput);
 		textBox.add(fonts);
