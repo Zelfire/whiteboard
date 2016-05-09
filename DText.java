@@ -15,5 +15,9 @@ public class DText extends DShape
 	    g2d.drawString(text, getX() - 4, getY() + 14); 
 	    
 	}
+	public void setText(String newText) {
+	    DTextModel model = (DTextModel) getModel();
+	    model.setText(newText);
+	}
 	
 }

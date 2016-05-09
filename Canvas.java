@@ -10,7 +10,8 @@ import javax.swing.*;
 import javax.swing.table.TableModel;
 
 public class Canvas extends JPanel
-{
+{   
+    //private Whiteboard whiteboard;
 	private ArrayList<DShape> shapes;
 	private DShape selected;
 	private ShapeTableModel tmodel;
@@ -241,7 +242,13 @@ public class Canvas extends JPanel
 	
 	private void setSelected(DShape shape)
 	{
-		selected = shape;
+		selected = shape;	
+//		if (selected instanceof DText ) {
+//		    whiteboard.enableTextControls();
+//        }
+//		else {
+//		    whiteboard.disableTextControls();
+//		}
 		repaint();
 	}
 	
@@ -277,10 +284,13 @@ public class Canvas extends JPanel
 			tmodel.fireTableDataChanged();
 		}
 	}
+	
 	public void updateTextShape(String txt)
 	{
-	    if (selected != null) {
-	        System.out.println(txt);
+	    if (selected != null && selected instanceof DText ) {
+	        DText tm = (DText) selected;
+	        tm.setText(txt);
+	        repaint();
 	    }
 	}
 	

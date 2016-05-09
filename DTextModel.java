@@ -2,7 +2,7 @@
 
 public class DTextModel extends DShapeModel
 {
-    private String text;
+    private static String text;
     private String fontName;
     private String defaultText = "Hello";
     private String defaultFontName = "Dialog";
@@ -19,6 +19,11 @@ public class DTextModel extends DShapeModel
     
     public String getFontName() {
         return fontName;
+    }
+    
+    public static void setText(String newText) {
+        text = newText;
+        
     }
 
 }

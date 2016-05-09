@@ -13,6 +13,9 @@ public class Whiteboard extends JFrame
 {
 	private Canvas canvas;
 	
+	JTextField textInput = new JTextField();
+	JComboBox<String> fonts = new JComboBox<>();
+	
 	public Whiteboard() {
 		setLayout(new BorderLayout());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -106,6 +109,7 @@ public class Whiteboard extends JFrame
 			public void actionPerformed(ActionEvent e) {
 				DShapeModel rectangle = new DRectModel();
 				addShape(rectangle);
+				disableTextControls();
 			}
 		});
 		JButton ovalButton = new JButton("Oval");
@@ -114,6 +118,7 @@ public class Whiteboard extends JFrame
 			public void actionPerformed(ActionEvent e) {
 				DShapeModel oval = new DOvalModel();
 				addShape(oval);
+				disableTextControls();
 			}
 		});
 		JButton lineButton = new JButton("Line");
@@ -123,6 +128,7 @@ public class Whiteboard extends JFrame
 			public void actionPerformed(ActionEvent e) {
 				DShapeModel line = new DLineModel();
 				addShape(line);
+				disableTextControls();
 			}
 		});
 		JButton textButton = new JButton("Text");
@@ -132,6 +138,7 @@ public class Whiteboard extends JFrame
             public void actionPerformed(ActionEvent e) {
                 DShapeModel text = new DTextModel();
                 addShape(text);
+                enableTextControls();
             }
         });
 		Box shapesBox = Box.createHorizontalBox();
@@ -154,7 +161,8 @@ public class Whiteboard extends JFrame
 			}
 		});
 		
-		JTextField textInput = new JTextField();
+		//JTextField textInput = new JTextField();
+		textInput.setEnabled(false);
 		textInput.setMaximumSize(new Dimension(100, textInput.getPreferredSize().height)); //Temporary size for now
 		textInput.getDocument().addDocumentListener(new DocumentListener() {
 		    public void changedUpdate(DocumentEvent e) {
@@ -168,7 +176,8 @@ public class Whiteboard extends JFrame
 		    }
 		});
 		
-		JComboBox<String> fonts = new JComboBox<>();
+		//JComboBox<String> fonts = new JComboBox<>();
+		fonts.setEnabled(false);
 		fonts.setMaximumSize(new Dimension(100, textInput.getPreferredSize().height)); //Temporary size for now
 		
 		Box textBox = Box.createHorizontalBox();
@@ -239,6 +248,19 @@ public class Whiteboard extends JFrame
 		model.setColor(Color.GRAY);
 		canvas.addShape(model);
 	}
+	
+	public void enableTextControls() {
+        textInput.setEnabled(true);
+        fonts.setEnabled(true);
+    }
+    public void disableTextControls() {
+        textInput.setEnabled(false);
+        textInput.setText("");
+        fonts.setEnabled(false);
+    }
+    public void updateTextControls(String theText, String theFont) {
+        textInput.setText(theText);
+    }
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable()
