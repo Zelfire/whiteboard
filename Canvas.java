@@ -15,6 +15,7 @@ public class Canvas extends JPanel
 	private ArrayList<DShape> shapes;
 	private DShape selected;
 	private ShapeTableModel tmodel;
+	private File currentFile;
 
 	public static final int KNOB_SIZE = 9;
 	
@@ -299,6 +300,7 @@ public class Canvas extends JPanel
 	}
 	
 	public void save(File f) throws FileNotFoundException{
+		if (!f.equals(currentFile)) {currentFile = f;}
 		XMLEncoder out = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(f)));
 		DShapeModel[] outputShapes = new DShapeModel[shapes.size()];
 		for (int i = 0; i < outputShapes.length; i++) {
@@ -310,6 +312,7 @@ public class Canvas extends JPanel
 	}
 	
 	public void open(File f) throws FileNotFoundException{
+		currentFile = f;
 		XMLDecoder in = new XMLDecoder(new BufferedInputStream(new FileInputStream(f)));
 		DShapeModel[] inputShapes = (DShapeModel[]) in.readObject();
 		clear();
@@ -342,5 +345,10 @@ public class Canvas extends JPanel
 	public TableModel getTableModel()
 	{
 		return tmodel;
+	}
+	
+	public File getCurrentFile()
+	{
+		return currentFile;
 	}
 }

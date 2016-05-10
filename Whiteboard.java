@@ -11,6 +11,7 @@ import javax.swing.filechooser.FileFilter;
 
 public class Whiteboard extends JFrame
 {
+	
 	private Canvas canvas;
 	
 	JTextField textInput = new JTextField();
@@ -18,6 +19,7 @@ public class Whiteboard extends JFrame
 	
 	public Whiteboard() {
 		setLayout(new BorderLayout());
+		this.setTitle("WhiteBoard");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		//Add the canvas
@@ -28,24 +30,66 @@ public class Whiteboard extends JFrame
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
-
-		JMenuItem save = new JMenuItem("Save");
-		save.addActionListener(new ActionListener()
+		
+		
+		JMenuItem saveAs = new JMenuItem("Save as");
+		saveAs.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent event)
 			{
 				//Prompt the user for a filename
-				String filename = JOptionPane.showInputDialog("File name", null);
-				try {
-					canvas.save(new File(filename + ".xml"));
+				//String filename = JOptionPane.showInputDialog("File name", null);
+				JFileChooser saver = new JFileChooser();
+				saver.setAcceptAllFileFilterUsed(false);
+				saver.setDialogTitle("Save as...");
+				saver.addChoosableFileFilter(new FileFilter() {
+					@Override
+					public boolean accept(File f)
+					{
+						String filename = f.getName().toLowerCase();
+						return filename.endsWith(".xml") || f.isDirectory();
+					}
+					@Override
+					public String getDescription()
+					{
+						return ".xml";
+					}
+					
+				});
+				saver.showSaveDialog(Whiteboard.this);
+				File file = saver.getSelectedFile();
+				if (file != null) {
+					String filename = file.getPath();
+					try {
+						canvas.save(new File(filename + ".xml"));
+					} catch (FileNotFoundException e) {
+						JOptionPane.showMessageDialog(null, "File not found!", "Error", JOptionPane.ERROR_MESSAGE);
+					} 
 				}
-				catch (FileNotFoundException e) {
-					JOptionPane.showMessageDialog(null, "File not found!", "Error", JOptionPane.ERROR_MESSAGE);
-				}
+				setTitle( canvas.getCurrentFile().getName() + " - WhiteBoard");
 			}
 		});
-		fileMenu.add(save);
+		
+		JMenuItem save = new JMenuItem("Save");
+		save.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (canvas.getCurrentFile() != null) {
+					try {
+						canvas.save(canvas.getCurrentFile());
+					} catch (FileNotFoundException exe) {
+						JOptionPane.showMessageDialog(null, "File not found!", "Error", JOptionPane.ERROR_MESSAGE);
+					} 
+				}
+				else {
+					ActionListener saveAslistener = saveAs.getActionListeners()[0];
+					saveAslistener.actionPerformed(e);
+				}
+				setTitle( canvas.getCurrentFile().getName() + " - WhiteBoard");
+			}
+		});
 		
 		JMenuItem open = new JMenuItem("Open");
 		open.addActionListener(new ActionListener() {
@@ -76,9 +120,10 @@ public class Whiteboard extends JFrame
 				catch(FileNotFoundException e) {
 					JOptionPane.showMessageDialog(null, "File not found!", "Error", JOptionPane.ERROR_MESSAGE);
 				}
+				setTitle( canvas.getCurrentFile().getName() + " - WhiteBoard");
 			}
 		});
-		fileMenu.add(open);
+		
 		
 		JMenuItem savePNG = new JMenuItem("Save as PNG");
 		savePNG.addActionListener(new ActionListener() {
@@ -96,6 +141,10 @@ public class Whiteboard extends JFrame
 				}
 			}
 		});
+		
+		fileMenu.add(save);
+		fileMenu.add(saveAs);
+		fileMenu.add(open);
 		fileMenu.add(savePNG);
 		
 		
