@@ -67,7 +67,8 @@ public class Whiteboard extends JFrame
 						JOptionPane.showMessageDialog(null, "File not found!", "Error", JOptionPane.ERROR_MESSAGE);
 					} 
 				}
-				setTitle( canvas.getCurrentFile().getName() + " - WhiteBoard");
+				if (canvas.getCurrentFile() != null)
+					setTitle( canvas.getCurrentFile().getName() + " - WhiteBoard");
 			}
 		});
 		
@@ -87,7 +88,8 @@ public class Whiteboard extends JFrame
 					ActionListener saveAslistener = saveAs.getActionListeners()[0];
 					saveAslistener.actionPerformed(e);
 				}
-				setTitle( canvas.getCurrentFile().getName() + " - WhiteBoard");
+				if (canvas.getCurrentFile() != null)
+					setTitle( canvas.getCurrentFile().getName() + " - WhiteBoard");
 			}
 		});
 		
@@ -114,13 +116,16 @@ public class Whiteboard extends JFrame
 				});
 				chooser.showOpenDialog(Whiteboard.this);
 				File selectedFile = chooser.getSelectedFile();
-				try {
-					canvas.open(selectedFile);
+				if (selectedFile != null) {
+					try {
+						canvas.open(selectedFile);
+					}
+					catch(FileNotFoundException e) {
+						JOptionPane.showMessageDialog(null, "File not found!", "Error", JOptionPane.ERROR_MESSAGE);
+					}	
+
+					setTitle( canvas.getCurrentFile().getName() + " - WhiteBoard");
 				}
-				catch(FileNotFoundException e) {
-					JOptionPane.showMessageDialog(null, "File not found!", "Error", JOptionPane.ERROR_MESSAGE);
-				}
-				setTitle( canvas.getCurrentFile().getName() + " - WhiteBoard");
 			}
 		});
 		
