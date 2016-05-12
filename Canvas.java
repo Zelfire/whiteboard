@@ -24,6 +24,7 @@ public class Canvas extends JPanel
 		
 		private int preXGap; 
 		private int preYGap;
+		private int nextToVisit;
 		private boolean moving = false;
 		private boolean resizingHorizontally = false;
 		private boolean resizingVertically = false;
@@ -81,9 +82,12 @@ public class Canvas extends JPanel
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
-			//Allows user to select shape in background by double clicking
+			//Allows user to iterate through overlapping shapes by double clicking 
 			if (e.getClickCount() > 1) {
-				for (DShape s : shapes) {
+				for (int i = 0; i < shapes.size(); i++) {
+					DShape s = shapes.get(nextToVisit++);
+					if (nextToVisit == shapes.size())
+						nextToVisit = 0;
 					Rectangle bounds = s.getBounds();
 					if (bounds.contains(e.getPoint()) && s != selected) {
 						setSelected(s);
@@ -91,17 +95,7 @@ public class Canvas extends JPanel
 					}
 				}
 			}
-			//Else select front-most shape
-			else {
-				for (DShape s : shapes) {
-					Rectangle bounds = s.getBounds();
-					if (bounds.contains(e.getPoint())) {
-						setSelected(s);
-					} 
-				}
-			}
-			
-			if (selected != null && selected.getBiggerBounds().contains(e.getPoint())) {
+			else if (selected != null && selected.getBiggerBounds().contains(e.getPoint())) {
 				
 				if (selected.getBounds().contains(e.getPoint())) {
 					moving = true;
@@ -114,10 +108,11 @@ public class Canvas extends JPanel
 				{
 					Point resizePoint = e.getPoint();
 					Point anchorPoint = new Point();
-					boolean left = resizePoint.x > selected.getX() - KNOB_SIZE/2 && resizePoint.x < selected.getX() + KNOB_SIZE/2;
-					boolean right = resizePoint.x > selected.getX() + selected.getWidth() - KNOB_SIZE/2 && resizePoint.x < selected.getX() + selected.getWidth() + KNOB_SIZE/2;
-					boolean top = resizePoint.y > selected.getY() - KNOB_SIZE/2 && resizePoint.y < selected.getY() + KNOB_SIZE/2;
-					boolean bottom = resizePoint.y > selected.getY() + selected.getHeight() - KNOB_SIZE/2 && resizePoint.y < selected.getY() + selected.getHeight() + KNOB_SIZE/2;
+					Rectangle resizeBounds = selected.getBiggerBounds();
+					boolean left = resizePoint.x < selected.getX() + KNOB_SIZE/2 && resizePoint.x >= resizeBounds.x;
+					boolean right = resizePoint.x > selected.getX() + selected.getWidth() - KNOB_SIZE/2 && resizePoint.x <= resizeBounds.x + resizeBounds.width;
+					boolean top = resizePoint.y < selected.getY() + KNOB_SIZE/2 && resizePoint.y >= resizeBounds.y;
+					boolean bottom = resizePoint.y > selected.getY() + selected.getHeight() - KNOB_SIZE/2 && resizePoint.y <= resizeBounds.y + resizeBounds.height;
 					resizingHorizontally = left || right;
 					resizingVertically = top || bottom;
 					if (left)
@@ -141,6 +136,18 @@ public class Canvas extends JPanel
 					preYGap = (top)? selected.getHeight() * -1 : selected.getHeight();
 				}
 			}
+		
+			//Else select front-most shape
+			else {
+				for (DShape s : shapes) {
+					Rectangle bounds = s.getBounds();
+					if (bounds.contains(e.getPoint())) {
+						setSelected(s);
+					} 
+				}
+			}
+			
+			
 		}
 			
 		
@@ -156,9 +163,8 @@ public class Canvas extends JPanel
 		public void mouseMoved(MouseEvent e) {	
 			
 			if (selected != null) {
-				Rectangle smallBounds = selected.getBounds();
-				Rectangle bigBounds = selected.getBiggerBounds();
-				if (bigBounds.contains(e.getPoint()) && !smallBounds.contains(e.getPoint())) {
+				Rectangle maxResizeBound = selected.getBiggerBounds();
+				if (maxResizeBound.contains(e.getPoint()) && !selected.getBounds().contains(e.getPoint())) {
 					setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 					cursorChange = true;
 				} else if (cursorChange) {
