@@ -11,7 +11,6 @@ import javax.swing.table.TableModel;
 
 public class Canvas extends JPanel
 {   
-    //private Whiteboard whiteboard;
 	private ArrayList<DShape> shapes;
 	private DShape selected;
 	private ShapeTableModel tmodel;
@@ -82,7 +81,7 @@ public class Canvas extends JPanel
 		
 		@Override
 		public void mousePressed(MouseEvent e) {
-			//Allows user to iterate through overlapping shapes by double clicking 
+			//Allows user to iterate through overlapping shapes by double clicking by going to the index of the next shape
 			if (e.getClickCount() > 1) {
 				for (int i = 0; i < shapes.size(); i++) {
 					DShape s = shapes.get(nextToVisit++);
@@ -297,6 +296,15 @@ public class Canvas extends JPanel
 	    if (selected != null && selected instanceof DText ) {
 	        DText tm = (DText) selected;
 	        tm.setText(txt);
+	        repaint();
+	    }
+	}
+	
+	public void setFont(String font)
+	{
+		if (selected != null && selected instanceof DText ) {
+	        DText tm = (DText) selected;
+	        tm.setFont(font);
 	        repaint();
 	    }
 	}

@@ -1,8 +1,10 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Locale;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -15,7 +17,7 @@ public class Whiteboard extends JFrame
 	private Canvas canvas;
 	
 	JTextField textInput = new JTextField();
-	JComboBox<String> fonts = new JComboBox<>();
+	JComboBox<String> fonts;
 	
 	public Whiteboard() {
 		setLayout(new BorderLayout());
@@ -231,8 +233,20 @@ public class Whiteboard extends JFrame
 		});
 		
 		//JComboBox<String> fonts = new JComboBox<>();
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		String[] fontList = ge.getAvailableFontFamilyNames();
+		fonts = new JComboBox<>(fontList);
 		fonts.setEnabled(false);
 		fonts.setMaximumSize(new Dimension(100, textInput.getPreferredSize().height)); //Temporary size for now
+		fonts.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String name = (String) fonts.getSelectedItem();
+				canvas.setFont(name);
+			}
+		});
+		
 		
 		Box textBox = Box.createHorizontalBox();
 		textBox.add(textInput);

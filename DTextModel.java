@@ -1,4 +1,4 @@
-
+import java.awt.Font;
 
 public class DTextModel extends DShapeModel
 {
@@ -21,9 +21,14 @@ public class DTextModel extends DShapeModel
         return fontName;
     }
     
-    public static void setText(String newText) {
+    public void setText(String newText) {
         text = newText;
-        
     }
+    
+    public void setFontName(String f)
+    {
+    	fontName =f;
+    }
+    
 
 }
