@@ -1,10 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Locale;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -13,7 +11,9 @@ import javax.swing.filechooser.FileFilter;
 
 public class Whiteboard extends JFrame
 {
-	
+
+	public static int DEFAULT_PORT = 21413;
+	public static String DEFAULT_IP = "127.0.0.1:" + DEFAULT_PORT;
 	private Canvas canvas;
 	
 	JTextField textInput = new JTextField();
@@ -63,8 +63,14 @@ public class Whiteboard extends JFrame
 				File file = saver.getSelectedFile();
 				if (file != null) {
 					String filename = file.getPath();
+
+					if (!filename.endsWith(".xml"))  //Prevents program from naming files such as output.xml.xml
+					{
+						filename += ".xml";
+					}
+					
 					try {
-						canvas.save(new File(filename + ".xml"));
+						canvas.save(new File(filename));
 					} catch (FileNotFoundException e) {
 						JOptionPane.showMessageDialog(null, "File not found!", "Error", JOptionPane.ERROR_MESSAGE);
 					} 
@@ -156,6 +162,53 @@ public class Whiteboard extends JFrame
 		
 		
 		setJMenuBar(menuBar);
+		
+		// Add network buttons
+		JTextField status = new JTextField("N/A");
+		final String CLIENT_MODE = "Client Mode";
+		final String SERVER_MODE = "Server Mode";
+		status.setEditable(false);
+		JButton startServer = new JButton("Server Start");
+		startServer.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (status.getText().equals(CLIENT_MODE))
+				{
+					JOptionPane.showMessageDialog(null, "Can't change from client mode to server mode. Restart the program.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				else
+				{
+					String port = JOptionPane.showInputDialog("Enter port number", DEFAULT_PORT);
+					status.setText(SERVER_MODE);
+				}
+			}
+		});
+		JButton startClient = new JButton("Client Start");
+		startClient.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if (status.getText().equals(SERVER_MODE))
+				{
+					JOptionPane.showMessageDialog(null,
+							"Can't change from server mode to client mode. Restart the program.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				else
+				{
+					String ipAddress = JOptionPane.showInputDialog("Enter IP Address", DEFAULT_IP);
+					status.setText(CLIENT_MODE);
+				}
+			}
+		});
+		Box networkBox = Box.createHorizontalBox();
+		networkBox.add(startServer);
+		networkBox.add(startClient);
+		networkBox.add(status);
+		add(networkBox, BorderLayout.NORTH);
+		
 		
 		//Add the controls
 		JLabel addLabel = new JLabel("Add: ");
