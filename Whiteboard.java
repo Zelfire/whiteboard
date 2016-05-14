@@ -1,19 +1,27 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
+import java.beans.*;
+import java.io.*;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
+import java.net.*;
+import java.util.ArrayList;
+
 public class Whiteboard extends JFrame
 {
+	private static final String ADD_COMMAND = "add";
+	private static final String REMOVE_COMMAND = "remove";
+	private static final String MOVE_FRONT_COMMAND = "front";
+	private static final String MOVE_BACK_COMMAND = "back";
+	
+	public static final int DEFAULT_PORT = 21413;
+	public static final String DEFAULT_IP = "127.0.0.1:" + DEFAULT_PORT;
 
-	public static int DEFAULT_PORT = 21413;
-	public static String DEFAULT_IP = "127.0.0.1:" + DEFAULT_PORT;
+	private ArrayList<ObjectOutputStream> clientStreams = new ArrayList<>();
+	
 	private Canvas canvas;
 	
 	JTextField textInput = new JTextField();
@@ -181,7 +189,18 @@ public class Whiteboard extends JFrame
 				else
 				{
 					String port = JOptionPane.showInputDialog("Enter port number", DEFAULT_PORT);
-					status.setText(SERVER_MODE);
+					try {
+						int portNum = Integer.parseInt(port);
+						if (portNum > 65535 || portNum < 0) {
+							throw new IllegalArgumentException();
+						}
+						status.setText(SERVER_MODE);
+						ServerAccepter server = new ServerAccepter(Integer.parseInt(port));
+						server.start();
+					}
+					catch(IllegalArgumentException e1) {
+						JOptionPane.showMessageDialog(null, "Enter an integer between 0 and 65535", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		});
@@ -193,13 +212,27 @@ public class Whiteboard extends JFrame
 			{
 				if (status.getText().equals(SERVER_MODE))
 				{
-					JOptionPane.showMessageDialog(null,
-							"Can't change from server mode to client mode. Restart the program.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "Can't change from server mode to client mode. Restart the program.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 				else
 				{
 					String ipAddress = JOptionPane.showInputDialog("Enter IP Address", DEFAULT_IP);
-					status.setText(CLIENT_MODE);
+					try 
+					{
+						String[] parts = ipAddress.split(":");
+						String host = parts[0];
+						int port = Integer.parseInt(parts[1]);
+						if (port > 65535 || port < 0) {
+							throw new IllegalArgumentException();
+						}
+						status.setText(CLIENT_MODE);
+						ClientHandler client = new ClientHandler(host, port);
+						client.start();
+					}
+					catch (Exception e1) //ArrayIndexOutOfBounds and IllegalArgumentException
+					{
+						JOptionPane.showMessageDialog(null, "Please enter a valid IP address", "Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		});
@@ -368,6 +401,27 @@ public class Whiteboard extends JFrame
 		model.setHeight(20);
 		model.setColor(Color.GRAY);
 		canvas.addShape(model);
+		updateClients(ADD_COMMAND, model);
+	}
+	
+	private void updateClients(String command, DShapeModel model) {
+
+		for (int i = 0; i < clientStreams.size(); i++) {
+			try
+			{
+				clientStreams.get(i).writeObject(command); //Can write directly, because Strings are serializable
+				OutputStream memStream = new ByteArrayOutputStream();
+				XMLEncoder in = new XMLEncoder(memStream);
+				in.writeObject(model);
+				in.close();
+				String xmlString = memStream.toString();
+				clientStreams.get(i).writeObject(xmlString);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void enableTextControls() {
@@ -382,6 +436,73 @@ public class Whiteboard extends JFrame
     public void updateTextControls(String theText, String theFont) {
         textInput.setText(theText);
     }
+    
+    class ServerAccepter extends Thread {
+    	private int port;
+        ServerAccepter(int port) {
+            this.port = port;
+        }
+        
+        @Override
+        public void run() {
+        	try {
+        		ServerSocket serverSocket = new ServerSocket(port);
+        		while (true) {
+        			Socket toClient = serverSocket.accept();
+        			ObjectOutputStream out = new ObjectOutputStream(toClient.getOutputStream());
+        			clientStreams.add(out);
+        			System.out.println("Server: Got client"); //Testing purposes
+        		}
+        	}
+        	catch(IOException e) {
+        		JOptionPane.showMessageDialog(null, "An error occurred", "Error", JOptionPane.ERROR_MESSAGE);
+        	}
+        }
+    }
+    
+    class ClientHandler extends Thread{
+    	private String name;
+    	private int port;
+    	
+    	ClientHandler(String name, int port) {
+    		this.name = name;
+    		this.port = port;
+    	}
+    	
+    	@Override
+    	public void run() {
+    		try 
+    		{
+                Socket toServer = new Socket(name, port);
+                ObjectInputStream in = new ObjectInputStream(toServer.getInputStream());
+                while (true) {
+                	String command = (String) in.readObject();
+                	String xmlShapeModel = (String) in.readObject();
+                	XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(xmlShapeModel.getBytes()));
+                	DShapeModel aModel = (DShapeModel) decoder.readObject();
+                	decoder.close();
+                	
+                	if (command.equals(ADD_COMMAND)) {
+                		canvas.addShape(aModel);
+                	}
+                	else if (command.equals(REMOVE_COMMAND)) {
+                		
+                	}
+                	else if (command.equals(MOVE_FRONT_COMMAND)) {
+                		
+                	}
+                	else {
+                		
+                	}
+                }
+    		}
+    		catch(Exception e) //IOException and ClassNotFoundException 
+    		{
+    			e.printStackTrace();
+        		JOptionPane.showMessageDialog(null, "Connection refused", "Error", JOptionPane.ERROR_MESSAGE);
+    		}
+    	}
+    }
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable()
@@ -389,6 +510,7 @@ public class Whiteboard extends JFrame
 			@Override
 			public void run()
 			{
+				new Whiteboard();
 				new Whiteboard();
 			}
 		});
