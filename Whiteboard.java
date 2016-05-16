@@ -22,7 +22,11 @@ public class Whiteboard extends JFrame implements ModelListener
 	
 	public static final int DEFAULT_PORT = 21413;
 	public static final String DEFAULT_IP = "127.0.0.1:" + DEFAULT_PORT;
+	
 
+	private JTextField status;
+	public static final String CLIENT_MODE = "Client Mode";
+	public static final String SERVER_MODE = "Server Mode";
 	private ArrayList<ObjectOutputStream> clientStreams = new ArrayList<>();
 	
 	private Canvas canvas;
@@ -175,9 +179,7 @@ public class Whiteboard extends JFrame implements ModelListener
 		setJMenuBar(menuBar);
 		
 		// Add network buttons
-		JTextField status = new JTextField("N/A");
-		final String CLIENT_MODE = "Client Mode";
-		final String SERVER_MODE = "Server Mode";
+		status = new JTextField("N/A");
 		status.setEditable(false);
 		JButton startServer = new JButton("Server Start");
 		startServer.addActionListener(new ActionListener()
@@ -229,6 +231,7 @@ public class Whiteboard extends JFrame implements ModelListener
 							throw new IllegalArgumentException();
 						}
 						status.setText(CLIENT_MODE);
+						canvas.clear();
 						ClientHandler client = new ClientHandler(host, port);
 						client.start();
 					}
@@ -398,6 +401,9 @@ public class Whiteboard extends JFrame implements ModelListener
 
 	private void addShape(DShapeModel model)
 	{
+		if (status.getText().equals(CLIENT_MODE)) {
+			return;
+		}
 		model.setID(serialID++);
 		model.setX(10);
 		model.setY(10);
@@ -411,6 +417,9 @@ public class Whiteboard extends JFrame implements ModelListener
 	
 	private void removeShape() 
 	{
+		if (status.getText().equals(CLIENT_MODE)) {
+			return;
+		}
 		DShapeModel removed = canvas.removeShape();
 		if (removed != null)
 			updateClients(REMOVE_COMMAND, removed);
@@ -418,6 +427,9 @@ public class Whiteboard extends JFrame implements ModelListener
 	
 	private void moveToFront() 
 	{
+		if (status.getText().equals(CLIENT_MODE)) {
+			return;
+		}
 		DShapeModel moved = canvas.moveToFront();
 		if (moved != null)
 			updateClients(MOVE_FRONT_COMMAND, moved);
@@ -425,6 +437,9 @@ public class Whiteboard extends JFrame implements ModelListener
 	
 	private void moveToBack()
 	{
+		if (status.getText().equals(CLIENT_MODE)) {
+			return;
+		}
 		DShapeModel moved = canvas.moveToBack();
 		if (moved != null)
 			updateClients(MOVE_BACK_COMMAND, moved);
@@ -482,7 +497,12 @@ public class Whiteboard extends JFrame implements ModelListener
         			Socket toClient = serverSocket.accept();
         			ObjectOutputStream out = new ObjectOutputStream(toClient.getOutputStream());
         			clientStreams.add(out);
-        			System.out.println("Server: Got client"); //Testing purposes
+        			
+        			//Populates the client canvas with the shapes currently on the server canvas
+        			for (DShape shape : canvas.getShapes()) {
+        				DShapeModel model = shape.getModel();
+        				updateClients(ADD_COMMAND, model);
+        			}
         		}
         	}
         	catch(IOException e) {
@@ -537,7 +557,6 @@ public class Whiteboard extends JFrame implements ModelListener
     		}
     		catch(Exception e) //IOException and ClassNotFoundException 
     		{
-    			e.printStackTrace();
         		JOptionPane.showMessageDialog(null, "Connection refused", "Error", JOptionPane.ERROR_MESSAGE);
     		}
     	}
@@ -550,7 +569,7 @@ public class Whiteboard extends JFrame implements ModelListener
 			public void run()
 			{
 				new Whiteboard();
-				new Whiteboard();
+				new Whiteboard(); //For testing. Need to remove later.
 			}
 		});
 	}

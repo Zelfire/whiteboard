@@ -390,7 +390,7 @@ public class Canvas extends JPanel
         selected = tempSelected; //Restore knobs
 	}
 
-	private void clear()
+	public void clear()
 	{
 		shapes.clear();
 		tmodel.fireTableDataChanged();
