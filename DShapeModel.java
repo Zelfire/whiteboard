@@ -8,11 +8,20 @@ public class DShapeModel
 	private Color color;
 	private Point anchor;
 	private ArrayList<ModelListener> listeners;
+	private int ID;
 	
 	public DShapeModel() {
 		bound = new Rectangle(0,0,0,0);
 		color = Color.GRAY;
 		listeners = new ArrayList<>();
+	}
+	
+	public int getID() {
+		return ID;
+	}
+	
+	public void setID(int ID) {
+		this.ID = ID;
 	}
 	
 	public int getX() {

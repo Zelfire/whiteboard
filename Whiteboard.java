@@ -17,6 +17,8 @@ public class Whiteboard extends JFrame
 	private static final String MOVE_FRONT_COMMAND = "front";
 	private static final String MOVE_BACK_COMMAND = "back";
 	
+	public static int serialID = 1;
+	
 	public static final int DEFAULT_PORT = 21413;
 	public static final String DEFAULT_IP = "127.0.0.1:" + DEFAULT_PORT;
 
@@ -343,21 +345,21 @@ public class Whiteboard extends JFrame
 		moveToFrontBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				canvas.moveToFront();
+				moveToFront();
 			}
 		});
 		JButton moveToBackBtn = new JButton("Move to Back");
 		moveToBackBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				canvas.moveToBack();
+				moveToBack();
 			}
 		});
 		JButton removeShapeBtn = new JButton("Remove Shape");
 		removeShapeBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				canvas.removeShape();
+				removeShape();
 			}
 		});
 		Box moveBox = Box.createHorizontalBox();
@@ -395,6 +397,7 @@ public class Whiteboard extends JFrame
 
 	private void addShape(DShapeModel model)
 	{
+		model.setID(serialID++);
 		model.setX(10);
 		model.setY(10);
 		model.setWidth(20);
@@ -404,8 +407,28 @@ public class Whiteboard extends JFrame
 		updateClients(ADD_COMMAND, model);
 	}
 	
+	private void removeShape() 
+	{
+		DShapeModel removed = canvas.removeShape();
+		if (removed != null)
+			updateClients(REMOVE_COMMAND, removed);
+	}
+	
+	private void moveToFront() 
+	{
+		DShapeModel moved = canvas.moveToFront();
+		if (moved != null)
+			updateClients(MOVE_FRONT_COMMAND, moved);
+	}
+	
+	private void moveToBack()
+	{
+		DShapeModel moved = canvas.moveToBack();
+		if (moved != null)
+			updateClients(MOVE_BACK_COMMAND, moved);
+	}
+	
 	private void updateClients(String command, DShapeModel model) {
-
 		for (int i = 0; i < clientStreams.size(); i++) {
 			try
 			{
@@ -486,13 +509,16 @@ public class Whiteboard extends JFrame
                 		canvas.addShape(aModel);
                 	}
                 	else if (command.equals(REMOVE_COMMAND)) {
-                		
+                		int modelID = aModel.getID();
+                		canvas.removeShape(modelID);
                 	}
                 	else if (command.equals(MOVE_FRONT_COMMAND)) {
-                		
+                		int modelID = aModel.getID();
+                		canvas.moveToFront(modelID);
                 	}
                 	else {
-                		
+                		int modelID = aModel.getID();
+                		canvas.moveToBack(modelID);
                 	}
                 }
     		}

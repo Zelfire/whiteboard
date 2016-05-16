@@ -258,9 +258,23 @@ public class Canvas extends JPanel
 		repaint();
 	}
 	
-	public void removeShape()
+	private DShape getShape(int ID) {
+		DShape shape = null;
+		for (int i = 0; i < shapes.size(); i++) {
+			DShapeModel model = shapes.get(i).getModel();
+			if (model.getID() == ID) {
+				shape = shapes.get(i);
+			}
+		}
+		return shape;
+	}
+	
+	
+	public DShapeModel removeShape()
 	{
+		DShapeModel selectedModel = null;
 		if (selected != null) {
+			selectedModel = selected.getModel();
 			shapes.remove(selected);
 			if (shapes.size() > 0)
 				selected = shapes.get(shapes.size() -1);
@@ -269,26 +283,51 @@ public class Canvas extends JPanel
 			repaint();	
 			tmodel.fireTableDataChanged();
 		}
+		return selectedModel;
+	}
+
+	
+	public void removeShape(int ID) {
+		selected = getShape(ID);
+		removeShape();
 	}
 	
-	public void moveToFront()
+	public DShapeModel moveToFront()
 	{
+		DShapeModel selectedModel = null;
 		if (selected != null) {
+			selectedModel = selected.getModel();
 			shapes.remove(selected);
 			shapes.add(shapes.size(), selected);
 			repaint();	
 			tmodel.fireTableDataChanged();
 		}
+		return selectedModel;
+	}
+	
+	public void moveToFront(int ID) 
+	{
+		selected = getShape(ID);
+		moveToFront();
 	}
 
-	public void moveToBack()
+	public DShapeModel moveToBack()
 	{
+		DShapeModel selectedModel = null;
 		if (selected != null) {
+			selectedModel = selected.getModel();
 			shapes.remove(selected);
 			shapes.add(0, selected);
 			repaint();
 			tmodel.fireTableDataChanged();
 		}
+		return selectedModel;
+	}
+	
+	public void moveToBack(int ID) 
+	{
+		selected = getShape(ID);
+		moveToBack();
 	}
 	
 	public void updateTextShape(String txt)
