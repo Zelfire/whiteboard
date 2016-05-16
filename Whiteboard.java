@@ -309,27 +309,28 @@ public class Whiteboard extends JFrame implements ModelListener
 			}
 		});
 		
-		//JTextField textInput = new JTextField();
 		textInput.setEnabled(false);
-		textInput.setMaximumSize(new Dimension(100, textInput.getPreferredSize().height)); //Temporary size for now
+		textInput.setMaximumSize(new Dimension(150, textInput.getPreferredSize().height)); //Temporary size for now
 		textInput.getDocument().addDocumentListener(new DocumentListener() {
 		    public void changedUpdate(DocumentEvent e) {
-		        canvas.updateTextShape(textInput.getText());
+		        setText();
 		    }
 		    public void removeUpdate(DocumentEvent e) {
-		        canvas.updateTextShape(textInput.getText());
+		        setText();
 		    }
 		    public void insertUpdate(DocumentEvent e) {
-		        canvas.updateTextShape(textInput.getText());
+		        setText();
+		    }
+		    public void setText() {
+		    	canvas.updateTextShape(textInput.getText());
 		    }
 		});
 		
-		//JComboBox<String> fonts = new JComboBox<>();
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		String[] fontList = ge.getAvailableFontFamilyNames();
 		fonts = new JComboBox<>(fontList);
 		fonts.setEnabled(false);
-		fonts.setMaximumSize(new Dimension(100, textInput.getPreferredSize().height)); //Temporary size for now
+		fonts.setMaximumSize(new Dimension(150, textInput.getPreferredSize().height)); //Temporary size for now
 		fonts.addActionListener(new ActionListener() {
 			
 			@Override
