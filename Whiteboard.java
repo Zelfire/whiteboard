@@ -10,12 +10,13 @@ import javax.swing.filechooser.FileFilter;
 import java.net.*;
 import java.util.ArrayList;
 
-public class Whiteboard extends JFrame
+public class Whiteboard extends JFrame implements ModelListener
 {
 	private static final String ADD_COMMAND = "add";
 	private static final String REMOVE_COMMAND = "remove";
 	private static final String MOVE_FRONT_COMMAND = "front";
 	private static final String MOVE_BACK_COMMAND = "back";
+	private static final String CHANGE_COMMAND = "change";
 	
 	public static int serialID = 1;
 	
@@ -403,6 +404,7 @@ public class Whiteboard extends JFrame
 		model.setWidth(20);
 		model.setHeight(20);
 		model.setColor(Color.GRAY);
+		model.addModelListener(this);
 		canvas.addShape(model);
 		updateClients(ADD_COMMAND, model);
 	}
@@ -426,6 +428,12 @@ public class Whiteboard extends JFrame
 		DShapeModel moved = canvas.moveToBack();
 		if (moved != null)
 			updateClients(MOVE_BACK_COMMAND, moved);
+	}
+	
+	@Override
+	public void modelChanged(DShapeModel model)
+	{
+		updateClients(CHANGE_COMMAND, model);
 	}
 	
 	private void updateClients(String command, DShapeModel model) {
@@ -516,9 +524,14 @@ public class Whiteboard extends JFrame
                 		int modelID = aModel.getID();
                 		canvas.moveToFront(modelID);
                 	}
-                	else {
+                	else if (command.equals(MOVE_BACK_COMMAND)){
                 		int modelID = aModel.getID();
                 		canvas.moveToBack(modelID);
+                	}
+                	else {
+                		int modelID = aModel.getID();
+                		DShapeModel clientModel = canvas.getShape(modelID).getModel();
+                		clientModel.mimic(aModel);
                 	}
                 }
     		}
@@ -541,4 +554,7 @@ public class Whiteboard extends JFrame
 			}
 		});
 	}
+
+
+	
 }

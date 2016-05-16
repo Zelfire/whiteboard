@@ -64,8 +64,10 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
 	{
 		ArrayList<DShape> shapes = canvas.getShapes();
 		for (int i = 0; i < shapes.size(); i++) {
-			if (shapes.get(i).getModel() == model)
+			if (shapes.get(i).getModel() == model) {
 				fireTableRowsUpdated(i, i);
+				break;
+			}
 		}
 	}
 }

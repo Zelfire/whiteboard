@@ -258,7 +258,7 @@ public class Canvas extends JPanel
 		repaint();
 	}
 	
-	private DShape getShape(int ID) {
+	public DShape getShape(int ID) {
 		DShape shape = null;
 		for (int i = 0; i < shapes.size(); i++) {
 			DShapeModel model = shapes.get(i).getModel();
@@ -266,6 +266,8 @@ public class Canvas extends JPanel
 				shape = shapes.get(i);
 			}
 		}
+		if (shape == null)
+			System.err.println("ID not found");
 		return shape;
 	}
 	
@@ -395,7 +397,7 @@ public class Canvas extends JPanel
 		repaint();
 	}
 
-	public TableModel getTableModel()
+	public ShapeTableModel getTableModel()
 	{
 		return tmodel;
 	}

@@ -101,4 +101,11 @@ public class DLineModel extends DShapeModel
 		
 	}
 
+	@Override
+	public void mimic(DShapeModel other) {
+		DLineModel line = (DLineModel) other;
+		p1 = line.p1;
+		p2 = line.p2;
+		super.mimic(other);
+	}
 }

@@ -101,5 +101,10 @@ public class DShapeModel
 		}
 	}
 	
-	
+	public void mimic(DShapeModel other) {
+		this.bound = other.bound;
+		this.color = other.color;
+		this.anchor = other.anchor;
+		notifyListeners();
+	}
 }

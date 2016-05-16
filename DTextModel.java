@@ -30,5 +30,8 @@ public class DTextModel extends DShapeModel
     	fontName =f;
     }
     
-
+    @Override
+    public void mimic(DShapeModel other) {
+    	//TODO: Mimic text data;
+    }
 }
