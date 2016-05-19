@@ -43,15 +43,7 @@ public class Canvas extends JPanel
 					if(resizingHorizontally)
 					{
 						selectedModel.setWidth(newWidth);
-						if (preXGap < 0) // coming from the left
-						{
-							selectedModel.setX(e.getX());
-							if (e.getX() > anchorPoint.x)
-							{
-								selectedModel.setX(anchorPoint.x);
-							}
-						}
-						else if (preXGap > 0 && e.getX() < anchorPoint.x) // coming from the right
+						if (e.getX() < anchorPoint.x) // coming from the right
 						{
 							selectedModel.setX(e.getX());
 						}
@@ -59,21 +51,11 @@ public class Canvas extends JPanel
 					if (resizingVertically)
 					{
 						selectedModel.setHeight(newHeight);
-						if (preYGap < 0) //coming from the top
-						{
-							selectedModel.setY(e.getY());
-							if (e.getY() > anchorPoint.y)
-							{
-								selectedModel.setY(anchorPoint.y);
-							}
-						}
-						else if(preYGap > 0 && e.getY() < anchorPoint.y)
+						if(e.getY() < anchorPoint.y)
 						{
 							selectedModel.setY(e.getY());
 						}
 					}
-					preXGap = e.getX() - anchorPoint.x;
-					preYGap = e.getY() - anchorPoint.y;
 				} 
 			}
 		}
@@ -107,11 +89,10 @@ public class Canvas extends JPanel
 				{
 					Point resizePoint = e.getPoint();
 					Point anchorPoint = new Point();
-					Rectangle resizeBounds = selected.getBiggerBounds();
-					boolean left = resizePoint.x < selected.getX() + KNOB_SIZE/2 && resizePoint.x >= resizeBounds.x;
-					boolean right = resizePoint.x > selected.getX() + selected.getWidth() - KNOB_SIZE/2 && resizePoint.x <= resizeBounds.x + resizeBounds.width;
-					boolean top = resizePoint.y < selected.getY() + KNOB_SIZE/2 && resizePoint.y >= resizeBounds.y;
-					boolean bottom = resizePoint.y > selected.getY() + selected.getHeight() - KNOB_SIZE/2 && resizePoint.y <= resizeBounds.y + resizeBounds.height;
+					boolean left = resizePoint.x < selected.getX() + KNOB_SIZE/2;
+					boolean right = resizePoint.x > selected.getX() + selected.getWidth() - KNOB_SIZE/2;
+					boolean top = resizePoint.y < selected.getY() + KNOB_SIZE/2;
+					boolean bottom = resizePoint.y > selected.getY() + selected.getHeight() - KNOB_SIZE/2;
 					resizingHorizontally = left || right;
 					resizingVertically = top || bottom;
 					if (left)
@@ -131,8 +112,6 @@ public class Canvas extends JPanel
 						anchorPoint.y = selected.getY();
 					}
 					selected.getModel().setAnchor(anchorPoint);
-					preXGap = (left) ?  selected.getWidth() * -1 : selected.getWidth();
-					preYGap = (top)? selected.getHeight() * -1 : selected.getHeight();
 				}
 			}
 		
