@@ -1,10 +1,10 @@
 import java.awt.*;
+import java.beans.Transient;
 
 public class DLineModel extends DShapeModel
 {
 	private Point p1;
 	private Point p2;
-	
 	
 	public DLineModel()
 	{
@@ -12,6 +12,16 @@ public class DLineModel extends DShapeModel
 		p1 = new Point();
 		p2 = new Point();
 		super.setAnchor(p1);
+	}
+	
+	public void setP1(Point newP) {
+		p1 = newP;
+		boundPoints();
+	}
+	
+	public void setP2(Point newP) {
+		p2 = newP;
+		boundPoints();
 	}
 	
 	public Point getP1() {
@@ -23,31 +33,7 @@ public class DLineModel extends DShapeModel
 	}
 	
 	@Override
-	public int getWidth() {
-		return Math.abs(p1.x -p2.x);
-	}
-	
-	@Override
-	public int getHeight() {
-		return Math.abs(p1.y - p2.y);
-	}
-	
-	@Override
-	public int getX() {
-		if (p1.x < p2.x)
-			return p1.x;
-		else
-			return p2.x;
-	}
-	
-	public int getY() {
-		if (p1.y < p2.y)
-			return p1.y;
-		else
-			return p2.y;
-	}
-	
-	@Override
+	@Transient
 	public void setX(int newX) {
 		int xChange = newX - getX();
 		p1.x += xChange;
@@ -56,6 +42,7 @@ public class DLineModel extends DShapeModel
 	}
 	
 	@Override
+	@Transient
 	public void setY(int newY) {
 		int yChange = newY - getY();
 		p1.y += yChange;
@@ -64,6 +51,7 @@ public class DLineModel extends DShapeModel
 	}
 	
 	@Override
+	@Transient
 	public void setWidth(int newWidth) {
 		if (p1.equals(super.getAnchor()))
 			p2.x = p1.x + newWidth;
@@ -73,6 +61,7 @@ public class DLineModel extends DShapeModel
 	}
 	
 	@Override
+	@Transient
 	public void setHeight(int newHeight) {
 		if (p1.equals(super.getAnchor()))
 			p2.y = p1.y + newHeight;
@@ -94,11 +83,8 @@ public class DLineModel extends DShapeModel
 	
 	private void boundPoints()
 	{
-		super.setX((p1.x < p2.x)? p1.x : p2.x);
-		super.setY((p1.y < p2.y)? p1.y : p2.y);
-		super.setWidth(this.getWidth());
-		super.setHeight(this.getHeight());
-		
+		Rectangle newBounds = new Rectangle(Math.min(p1.x, p2.x), Math.min(p1.y,p2.y), Math.abs(p1.x - p2.x), Math.abs(p1.y - p2.y));
+		setBounds(newBounds);
 	}
 
 	@Override

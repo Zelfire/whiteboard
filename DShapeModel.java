@@ -107,4 +107,9 @@ public class DShapeModel
 		this.anchor = other.anchor;
 		notifyListeners();
 	}
+	
+	public void setBounds(Rectangle newBounds) {
+		bound = newBounds;
+		notifyListeners();
+	}
 }
