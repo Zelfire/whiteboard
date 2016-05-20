@@ -15,6 +15,7 @@ public class Canvas extends JPanel
 	private DShape selected;
 	private ShapeTableModel tmodel;
 	private File currentFile;
+	private Whiteboard whiteboard;
 
 	public static final int KNOB_SIZE = 9;
 	
@@ -179,6 +180,10 @@ public class Canvas extends JPanel
 		tmodel = new ShapeTableModel();
 		tmodel.setCanvas(this);
 	}
+	
+	public void setWhiteboard(Whiteboard board) {
+		whiteboard = board;
+	}
 
 	@Override
 	public void paintComponent(Graphics g) {
@@ -228,12 +233,14 @@ public class Canvas extends JPanel
 	private void setSelected(DShape shape)
 	{
 		selected = shape;	
-//		if (selected instanceof DText ) {
-//		    whiteboard.enableTextControls();
-//        }
-//		else {
-//		    whiteboard.disableTextControls();
-//		}
+		if (selected instanceof DText ) {
+			DTextModel textModel = (DTextModel) selected.getModel();
+			whiteboard.enableTextControls();
+			whiteboard.updateTextControls(textModel.getText(), textModel.getFontName());
+        }
+		else {
+		    whiteboard.disableTextControls();
+		}
 		repaint();
 	}
 	

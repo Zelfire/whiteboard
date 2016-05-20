@@ -2,7 +2,7 @@ import java.awt.Font;
 
 public class DTextModel extends DShapeModel
 {
-    private static String text;
+    private String text;
     private String fontName;
     private String defaultText = "Hello";
     private String defaultFontName = "Dialog";

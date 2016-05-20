@@ -42,6 +42,7 @@ public class Whiteboard extends JFrame implements ModelListener
 		//Add the canvas
 		canvas = new Canvas();
 		add(canvas, BorderLayout.CENTER);
+		canvas.setWhiteboard(this);
 		
 		//Add the file menu
 		JMenuBar menuBar = new JMenuBar();
@@ -56,7 +57,6 @@ public class Whiteboard extends JFrame implements ModelListener
 			public void actionPerformed(ActionEvent event)
 			{
 				//Prompt the user for a filename
-				//String filename = JOptionPane.showInputDialog("File name", null);
 				JFileChooser saver = new JFileChooser();
 				saver.setAcceptAllFileFilterUsed(false);
 				saver.setDialogTitle("Save as...");
@@ -284,9 +284,10 @@ public class Whiteboard extends JFrame implements ModelListener
             
             @Override
             public void actionPerformed(ActionEvent e) {
-                DShapeModel text = new DTextModel();
+                DTextModel text = new DTextModel();
                 addShape(text);
                 enableTextControls();
+                updateTextControls(text.getText(), text.getFontName());
             }
         });
 		Box shapesBox = Box.createHorizontalBox();
@@ -482,6 +483,7 @@ public class Whiteboard extends JFrame implements ModelListener
     }
     public void updateTextControls(String theText, String theFont) {
         textInput.setText(theText);
+        fonts.setSelectedItem(theFont);
     }
     
     class ServerAccepter extends Thread {

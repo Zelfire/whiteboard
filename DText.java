@@ -10,11 +10,12 @@ public class DText extends DShape
 	{
 	    DTextModel model = (DTextModel) getModel();
 	    String text = model.getText();
-	    String fontName = model.getFontName();
 	    	    
 	    Graphics2D g2d = (Graphics2D) g;
 	    Font font = computeFont();
 	    g2d.setFont(font);
+	    g2d.setColor(getColor());
+	    
 	    Shape clip = g2d.getClip();
 	    g2d.setClip(clip.getBounds().intersection(getBounds()));
 	    g2d.drawString(text, getX(), getY() + getHeight());
