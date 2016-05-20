@@ -234,6 +234,7 @@ public class Whiteboard extends JFrame implements ModelListener
 						canvas.clear();
 						ClientHandler client = new ClientHandler(host, port);
 						client.start();
+						canvas.removeListeners();
 					}
 					catch (Exception e1) //ArrayIndexOutOfBounds and IllegalArgumentException
 					{
@@ -257,7 +258,6 @@ public class Whiteboard extends JFrame implements ModelListener
 			public void actionPerformed(ActionEvent e) {
 				DShapeModel rectangle = new DRectModel();
 				addShape(rectangle);
-				disableTextControls();
 			}
 		});
 		JButton ovalButton = new JButton("Oval");
@@ -266,7 +266,6 @@ public class Whiteboard extends JFrame implements ModelListener
 			public void actionPerformed(ActionEvent e) {
 				DShapeModel oval = new DOvalModel();
 				addShape(oval);
-				disableTextControls();
 			}
 		});
 		JButton lineButton = new JButton("Line");
@@ -276,7 +275,6 @@ public class Whiteboard extends JFrame implements ModelListener
 			public void actionPerformed(ActionEvent e) {
 				DShapeModel line = new DLineModel();
 				addShape(line);
-				disableTextControls();
 			}
 		});
 		JButton textButton = new JButton("Text");
@@ -286,8 +284,6 @@ public class Whiteboard extends JFrame implements ModelListener
             public void actionPerformed(ActionEvent e) {
                 DTextModel text = new DTextModel();
                 addShape(text);
-                enableTextControls();
-                updateTextControls(text.getText(), text.getFontName());
             }
         });
 		Box shapesBox = Box.createHorizontalBox();
@@ -450,7 +446,15 @@ public class Whiteboard extends JFrame implements ModelListener
 	@Override
 	public void modelChanged(DShapeModel model)
 	{
-		updateClients(CHANGE_COMMAND, model);
+		if (model instanceof DTextModel) {
+			enableTextControls();
+			DTextModel textModel =  (DTextModel) model;
+			updateTextControls(textModel.getText(), textModel.getFontName());
+		}
+		else
+			disableTextControls();
+		if (SERVER_MODE.equals(status.getText()))
+			updateClients(CHANGE_COMMAND, model);
 	}
 	
 	private void updateClients(String command, DShapeModel model) {

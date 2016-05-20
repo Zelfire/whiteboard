@@ -93,7 +93,7 @@ public class DShapeModel
 		return anchor;
 	}
 	
-	private void notifyListeners()
+	public void notifyListeners()
 	{
 		for (ModelListener ml: listeners)
 		{

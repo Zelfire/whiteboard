@@ -32,7 +32,7 @@ public class Canvas extends JPanel
 	
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (selected != null && !whiteboard.getStatus().equals(whiteboard.CLIENT_MODE)) {
+			if (selected != null) {
 				DShapeModel selectedModel = selected.getModel();
 				if (moving) {
 					selectedModel.setX(e.getX() - preXGap);
@@ -220,7 +220,7 @@ public class Canvas extends JPanel
 		theShape.setModel(shapeModel);
 		theShape.attachView(this);
 		shapes.add(theShape);
-		selected = theShape;
+		setSelected(theShape);
 		repaint();
 		tmodel.fireTableDataChanged();
 	}
@@ -233,14 +233,8 @@ public class Canvas extends JPanel
 	private void setSelected(DShape shape)
 	{
 		selected = shape;	
-		if (selected instanceof DText ) {
-			DTextModel textModel = (DTextModel) selected.getModel();
-			whiteboard.enableTextControls();
-			whiteboard.updateTextControls(textModel.getText(), textModel.getFontName());
-        }
-		else {
-		    whiteboard.disableTextControls();
-		}
+		DShapeModel model = selected.getModel();
+		model.notifyListeners();
 		repaint();
 	}
 	
@@ -391,5 +385,10 @@ public class Canvas extends JPanel
 	public File getCurrentFile()
 	{
 		return currentFile;
+	}
+	
+	public void removeListeners() {
+		MouseListener[] listeners = getMouseListeners();
+		removeMouseListener(listeners[0]);
 	}
 }
