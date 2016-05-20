@@ -28,6 +28,7 @@ public class Whiteboard extends JFrame implements ModelListener
 	public static final String CLIENT_MODE = "Client Mode";
 	public static final String SERVER_MODE = "Server Mode";
 	private ArrayList<ObjectOutputStream> clientStreams = new ArrayList<>();
+	private boolean afterAdd;
 	
 	private Canvas canvas;
 	
@@ -409,6 +410,7 @@ public class Whiteboard extends JFrame implements ModelListener
 		model.setHeight(20);
 		model.setColor(Color.GRAY);
 		model.addModelListener(this);
+		afterAdd = true;
 		canvas.addShape(model);
 		updateClients(ADD_COMMAND, model);
 	}
@@ -453,8 +455,11 @@ public class Whiteboard extends JFrame implements ModelListener
 		}
 		else
 			disableTextControls();
-		if (SERVER_MODE.equals(status.getText()))
+		
+		if (SERVER_MODE.equals(status.getText()) && !afterAdd)
 			updateClients(CHANGE_COMMAND, model);
+		if(afterAdd)
+			afterAdd = false;
 	}
 	
 	private void updateClients(String command, DShapeModel model) {
@@ -580,7 +585,8 @@ public class Whiteboard extends JFrame implements ModelListener
 			public void run()
 			{
 				new Whiteboard();
-				new Whiteboard(); //For testing. Need to remove later.
+				Whiteboard client = new Whiteboard(); //For testing. Need to remove later.
+				client.setLocation(client.getWidth(), 0);
 			}
 		});
 	}
