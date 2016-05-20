@@ -486,6 +486,10 @@ public class Whiteboard extends JFrame implements ModelListener
         fonts.setSelectedItem(theFont);
     }
     
+    public String getStatus() {
+    	return status.getText();
+    }
+    
     class ServerAccepter extends Thread {
     	private int port;
         ServerAccepter(int port) {

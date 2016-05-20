@@ -32,7 +32,7 @@ public class Canvas extends JPanel
 	
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (selected != null) {
+			if (selected != null && !whiteboard.getStatus().equals(whiteboard.CLIENT_MODE)) {
 				DShapeModel selectedModel = selected.getModel();
 				if (moving) {
 					selectedModel.setX(e.getX() - preXGap);

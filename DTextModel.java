@@ -32,6 +32,9 @@ public class DTextModel extends DShapeModel
     
     @Override
     public void mimic(DShapeModel other) {
-    	//TODO: Mimic text data;
+    	DTextModel otherText = (DTextModel) other;
+    	text = otherText.text;
+    	fontName = otherText.fontName;
+    	super.mimic(other);
     }
 }
