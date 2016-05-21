@@ -299,7 +299,7 @@ public class Whiteboard extends JFrame implements ModelListener
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				DShape selected = canvas.getSelected();
-				if (canvas.getSelected() != null) {
+				if (canvas.getSelected() != null && !status.getText().equals(CLIENT_MODE)) {
 					Color newColor = JColorChooser.showDialog(null, "Color", selected.getColor());
 					selected.getModel().setColor(newColor);
 				}
