@@ -320,7 +320,8 @@ public class Whiteboard extends JFrame implements ModelListener
 		        setText();
 		    }
 		    public void setText() {
-		    	canvas.updateTextShape(textInput.getText());
+		    	if (!afterAdd)
+		    		canvas.updateTextShape(textInput.getText());
 		    }
 		});
 		
@@ -334,7 +335,8 @@ public class Whiteboard extends JFrame implements ModelListener
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = (String) fonts.getSelectedItem();
-				canvas.setFont(name);
+				if (!afterAdd)
+					canvas.setFont(name);
 			}
 		});
 		
@@ -410,7 +412,9 @@ public class Whiteboard extends JFrame implements ModelListener
 		model.setHeight(20);
 		model.setColor(Color.GRAY);
 		model.addModelListener(this);
-		afterAdd = true;
+		if (model instanceof DTextModel) {
+			afterAdd = true;
+		}
 		canvas.addShape(model);
 		updateClients(ADD_COMMAND, model);
 	}
@@ -490,13 +494,9 @@ public class Whiteboard extends JFrame implements ModelListener
         fonts.setEnabled(false);
     }
     public void updateTextControls(String theText, String theFont) {
-    	if (!afterAdd) {
-            textInput.setText(theText);
-            fonts.setSelectedItem(theFont);
-    	}
-    	else {
-    		afterAdd = false;
-    	}
+    	textInput.setText(theText);
+    	fonts.setSelectedItem(theFont);
+    	afterAdd = false;
     }
     
     public String getStatus() {
