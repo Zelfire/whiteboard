@@ -485,8 +485,10 @@ public class Whiteboard extends JFrame implements ModelListener
 	}
 	
 	public void enableTextControls() {
-        textInput.setEnabled(true);
-        fonts.setEnabled(true);
+		if (!status.getText().equals(CLIENT_MODE)) {
+	        textInput.setEnabled(true);
+	        fonts.setEnabled(true);	
+		}
     }
     public void disableTextControls() {
         textInput.setEnabled(false);

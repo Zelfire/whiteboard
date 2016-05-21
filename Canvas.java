@@ -7,8 +7,10 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.table.TableModel;
 
+/**
+ * A Canvas of DShape
+ */
 public class Canvas extends JPanel
 {   
 	private ArrayList<DShape> shapes;
@@ -21,7 +23,6 @@ public class Canvas extends JPanel
 	
 	private class CanvasMouseListener implements MouseListener, MouseMotionListener
 	{	
-		
 		private int preXGap; 
 		private int preYGap;
 		private int nextToVisit;
@@ -202,6 +203,10 @@ public class Canvas extends JPanel
 		}
 	}
 	
+	/**
+	 * Creates a shape using the given shape model and adds it to the canvas
+	 * @param shapeModel the model of the shape
+	 */
 	public void addShape(DShapeModel shapeModel) {
 		DShape theShape;
 		if (shapeModel instanceof DRectModel) {
@@ -225,11 +230,19 @@ public class Canvas extends JPanel
 		tmodel.fireTableDataChanged();
 	}
 	
+	/**
+	 * Gets the currently selected shape
+	 * @return the selected shape
+	 */
 	public DShape getSelected()
 	{
 		return selected;
 	}
 	
+	/**
+	 * Private helper method to set the selected shape
+	 * @param shape the shape to be set as the selected shape
+	 */
 	private void setSelected(DShape shape)
 	{
 		selected = shape;	
@@ -244,6 +257,11 @@ public class Canvas extends JPanel
 		repaint();
 	}
 	
+	/**
+	 * Gets a shape with the given ID
+	 * @param ID the ID to check for
+	 * @return the shape with the given ID, null if no shape found
+	 */
 	public DShape getShape(int ID) {
 		DShape shape = null;
 		for (int i = 0; i < shapes.size(); i++) {
@@ -257,7 +275,10 @@ public class Canvas extends JPanel
 		return shape;
 	}
 	
-	
+	/**
+	 * Removes the currently selected shape
+	 * @return the model of the shape that was removed
+	 */
 	public DShapeModel removeShape()
 	{
 		DShapeModel selectedModel = null;
@@ -265,7 +286,7 @@ public class Canvas extends JPanel
 			selectedModel = selected.getModel();
 			shapes.remove(selected);
 			if (shapes.size() > 0)
-				selected = shapes.get(shapes.size() -1);
+				setSelected(shapes.get(shapes.size() -1));
 			else
 				selected = null;
 			repaint();	
@@ -274,12 +295,19 @@ public class Canvas extends JPanel
 		return selectedModel;
 	}
 
-	
+	/**
+	 * Removes the shape with the given ID
+	 * @param ID the ID of the shape to remove
+	 */
 	public void removeShape(int ID) {
 		selected = getShape(ID);
 		removeShape();
 	}
 	
+	/**
+	 * Moves the currently selected shape to the front of the canvas
+	 * @return the model of the moved shape
+	 */
 	public DShapeModel moveToFront()
 	{
 		DShapeModel selectedModel = null;
@@ -293,12 +321,20 @@ public class Canvas extends JPanel
 		return selectedModel;
 	}
 	
+	/**
+	 * Moves the shape with the given ID to the front of the canvas
+	 * @param ID the ID of the shape to move
+	 */
 	public void moveToFront(int ID) 
 	{
 		selected = getShape(ID);
 		moveToFront();
 	}
 
+	/**
+	 * Moves the currently selected shape to the back of the canvas
+	 * @return the model of the shape that was moved
+	 */
 	public DShapeModel moveToBack()
 	{
 		DShapeModel selectedModel = null;
@@ -312,12 +348,20 @@ public class Canvas extends JPanel
 		return selectedModel;
 	}
 	
+	/**
+	 * Moves the shape with the given ID to the back of the canvas
+	 * @param ID the ID of the shape to move
+	 */
 	public void moveToBack(int ID) 
 	{
 		selected = getShape(ID);
 		moveToBack();
 	}
 	
+	/**
+	 * Updates the selected shape with the given string if the selected shape is a text shape
+	 * @param txt the string to set the text shape
+	 */
 	public void updateTextShape(String txt)
 	{
 	    if (selected != null && selected instanceof DText ) {
@@ -327,6 +371,10 @@ public class Canvas extends JPanel
 	    }
 	}
 	
+	/**
+	 * Sets the font of the selected shape if the selected shape is a text shape
+	 * @param font the font to set the shape
+	 */
 	public void setFont(String font)
 	{
 		if (selected != null && selected instanceof DText ) {
@@ -336,10 +384,19 @@ public class Canvas extends JPanel
 	    }
 	}
 	
+	/**
+	 * Gets an arraylist containing all the shapes in the canvas
+	 * @return
+	 */
 	public ArrayList<DShape> getShapes() {
 		return shapes;
 	}
 	
+	/**
+	 * Saves the current canvas as an XML file
+	 * @param f the file name to save as
+	 * @throws FileNotFoundException
+	 */
 	public void save(File f) throws FileNotFoundException{
 		if (!f.equals(currentFile)) {currentFile = f;}
 		XMLEncoder out = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(f)));
@@ -352,6 +409,11 @@ public class Canvas extends JPanel
 		out.close();
 	}
 	
+	/**
+	 * Loads the canvas with the given .xml file
+	 * @param f the file to load
+	 * @throws FileNotFoundException
+	 */
 	public void open(File f) throws FileNotFoundException{
 		currentFile = f;
 		XMLDecoder in = new XMLDecoder(new BufferedInputStream(new FileInputStream(f)));
@@ -364,6 +426,11 @@ public class Canvas extends JPanel
 		in.close();
 	}
 	
+	/**
+	 * Saves the current canvas as a .png file
+	 * @param f the name of the .png file to save as
+	 * @throws IOException
+	 */
 	public void saveAsPNG(File f) throws IOException {
 		DShape tempSelected = selected;
 		selected = null; //Get rid of knobs temporarily
@@ -376,6 +443,9 @@ public class Canvas extends JPanel
         selected = tempSelected; //Restore knobs
 	}
 
+	/**
+	 * Clears the canvas
+	 */
 	public void clear()
 	{
 		shapes.clear();
@@ -383,16 +453,27 @@ public class Canvas extends JPanel
 		repaint();
 	}
 
+	/**
+	 * Gets a table model that dynamically retrieves data from the canvas
+	 * @return the table model of the canvas shapes
+	 */
 	public ShapeTableModel getTableModel()
 	{
 		return tmodel;
 	}
 	
+	/**
+	 * Gets the current file used by the canvas
+	 * @return
+	 */
 	public File getCurrentFile()
 	{
 		return currentFile;
 	}
 	
+	/**
+	 * Removes the mouse listener from the canvas
+	 */
 	public void removeListeners() {
 		MouseListener[] listeners = getMouseListeners();
 		removeMouseListener(listeners[0]);

@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.font.GlyphVector;
 
 public class DText extends DShape
 {
