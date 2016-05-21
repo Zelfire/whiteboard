@@ -448,6 +448,7 @@ public class Whiteboard extends JFrame implements ModelListener
 	@Override
 	public void modelChanged(DShapeModel model)
 	{
+		/*
 		if (model instanceof DTextModel) {
 			enableTextControls();
 			DTextModel textModel =  (DTextModel) model;
@@ -455,11 +456,9 @@ public class Whiteboard extends JFrame implements ModelListener
 		}
 		else
 			disableTextControls();
-		
-		if (SERVER_MODE.equals(status.getText()) && !afterAdd)
+		*/
+		if (SERVER_MODE.equals(status.getText()))
 			updateClients(CHANGE_COMMAND, model);
-		if(afterAdd)
-			afterAdd = false;
 	}
 	
 	private void updateClients(String command, DShapeModel model) {
@@ -491,8 +490,13 @@ public class Whiteboard extends JFrame implements ModelListener
         fonts.setEnabled(false);
     }
     public void updateTextControls(String theText, String theFont) {
-        textInput.setText(theText);
-        fonts.setSelectedItem(theFont);
+    	if (!afterAdd) {
+            textInput.setText(theText);
+            fonts.setSelectedItem(theFont);
+    	}
+    	else {
+    		afterAdd = false;
+    	}
     }
     
     public String getStatus() {

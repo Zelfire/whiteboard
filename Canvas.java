@@ -233,8 +233,14 @@ public class Canvas extends JPanel
 	private void setSelected(DShape shape)
 	{
 		selected = shape;	
-		DShapeModel model = selected.getModel();
-		model.notifyListeners();
+		if (selected instanceof DText) {
+			whiteboard.enableTextControls();
+			DTextModel textModel = (DTextModel) selected.getModel();
+			whiteboard.updateTextControls(textModel.getText(), textModel.getFontName());
+		}
+		else {
+			whiteboard.disableTextControls();
+		}
 		repaint();
 	}
 	
