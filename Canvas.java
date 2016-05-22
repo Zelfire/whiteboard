@@ -278,7 +278,7 @@ public class Canvas extends JPanel
 			selectedModel = selected.getModel();
 			shapes.remove(selected);
 			if (shapes.size() > 0)
-				selected = shapes.get(shapes.size() -1);
+				setSelected(shapes.get(shapes.size() -1));
 			else
 				selected = null;
 			repaint();	

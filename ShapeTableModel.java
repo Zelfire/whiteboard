@@ -41,12 +41,20 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
 	}
 	
 	@Override
+	/**
+	 * Gets the number of columns the table has
+	 * @return the number of columns
+	 */
 	public int getColumnCount()
 	{
 		return NUM_COLUMNS;
 	}
 
 	@Override
+	/**
+	 * Gets the number of rows that the table has
+	 * @return the number of rows
+	 */
 	public int getRowCount()
 	{
 		if (canvas != null)
@@ -56,6 +64,11 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
 	}
 
 	@Override
+	/**
+	 * Gets the value at the given row and column of the table
+	 * @param x the row
+	 * @param y the column
+	 */
 	public Object getValueAt(int x, int y)
 	{
 		DShapeModel model = canvas.getShapes().get(x).getModel();
@@ -70,6 +83,10 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
 	}
 
 	@Override
+	/**
+	 * Updates the table when the given model has changed
+	 * @param model the model that has changed
+	 */
 	public void modelChanged(DShapeModel model)
 	{
 		ArrayList<DShape> shapes = canvas.getShapes();
@@ -82,6 +99,14 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
 	}
 	
 	@Override
+	/**
+	 * Empty implementation of ModelListeners modelSelected
+	 * @param model the model that has been selected
+	 */
 	public void modelSelected(DShapeModel model) {
+		/*Potential for future implementation to allow users to change
+		 * the selected shape through the table 
+		 */
+		
 	}
 }
