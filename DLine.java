@@ -6,6 +6,10 @@ public class DLine extends DShape
 {
 
 	@Override
+	/**
+	 * draws this line
+	 * @param the graphics component to draw this shape
+	 */
 	public void draw(Graphics g)
 	{
 		DLineModel model = (DLineModel) getModel();
@@ -17,6 +21,10 @@ public class DLine extends DShape
 	}
 	
 	@Override
+	/**
+	 * Gives the points of where the knobs should be drawn on this shape 
+	 * @return returns an array list of points  
+	 */
 	public ArrayList<Point> getKnobs() {
 		DLineModel model = (DLineModel) getModel();
 		ArrayList<Point> knobs = new ArrayList<>();

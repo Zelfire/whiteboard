@@ -44,11 +44,10 @@ public class Whiteboard extends JFrame implements ModelListener
 		canvas = new Canvas();
 		add(canvas, BorderLayout.CENTER);
 		
-		//Add the file menu
+		//Add the file menu and its options
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
-		
 		
 		JMenuItem saveAs = new JMenuItem("Save as");
 		saveAs.addActionListener(new ActionListener()
@@ -107,7 +106,7 @@ public class Whiteboard extends JFrame implements ModelListener
 						JOptionPane.showMessageDialog(null, "File not found!", "Error", JOptionPane.ERROR_MESSAGE);
 					} 
 				}
-				else {
+				else { //if this is a new project use the saveAs operation 
 					ActionListener saveAslistener = saveAs.getActionListeners()[0];
 					saveAslistener.actionPerformed(e);
 				}
@@ -251,7 +250,7 @@ public class Whiteboard extends JFrame implements ModelListener
 		add(networkBox, BorderLayout.NORTH);
 		
 		
-		//Add the controls
+		//Add the shape buttons
 		JLabel addLabel = new JLabel("Add: ");
 		JButton rectButton = new JButton("Rect");
 		rectButton.addActionListener(new ActionListener() {
@@ -307,6 +306,7 @@ public class Whiteboard extends JFrame implements ModelListener
 			}
 		});
 		
+		//Set up the text controls
 		textInput.setEnabled(false);
 		textInput.setMaximumSize(new Dimension(150, textInput.getPreferredSize().height)); //Temporary size for now
 		textInput.getDocument().addDocumentListener(new DocumentListener() {
@@ -345,7 +345,7 @@ public class Whiteboard extends JFrame implements ModelListener
 		textBox.add(textInput);
 		textBox.add(fonts);
 		
-		
+		//Add shape operations
 		JButton moveToFrontBtn = new JButton("Move to Front");
 		moveToFrontBtn.addActionListener(new ActionListener() {
 			@Override
@@ -372,6 +372,7 @@ public class Whiteboard extends JFrame implements ModelListener
 		moveBox.add(moveToBackBtn);
 		moveBox.add(removeShapeBtn);
 		
+		//Add table containing shape info
 		JTable shapeInfo = new JTable(canvas.getTableModel());
 		
 		JScrollPane tableScroller = new JScrollPane(shapeInfo);
@@ -399,7 +400,10 @@ public class Whiteboard extends JFrame implements ModelListener
 		setVisible(true);
 	}
 
-
+	/**
+	 * Adds a shape to the canvas of the whiteboard
+	 * @param model the model to add
+	 */
 	private void addShape(DShapeModel model)
 	{
 		if (status.getText().equals(CLIENT_MODE)) {
@@ -418,6 +422,9 @@ public class Whiteboard extends JFrame implements ModelListener
 		updateClients(ADD_COMMAND, model);
 	}
 	
+	/**
+	 * Removes the selected shape from the canvas
+	 */
 	private void removeShape() 
 	{
 		if (status.getText().equals(CLIENT_MODE)) {
@@ -428,6 +435,9 @@ public class Whiteboard extends JFrame implements ModelListener
 			updateClients(REMOVE_COMMAND, removed);
 	}
 	
+	/**
+	 * Moves the selected shape to the front of other shaped
+	 */
 	private void moveToFront() 
 	{
 		if (status.getText().equals(CLIENT_MODE)) {
@@ -438,6 +448,9 @@ public class Whiteboard extends JFrame implements ModelListener
 			updateClients(MOVE_FRONT_COMMAND, moved);
 	}
 	
+	/**
+	 * Moves the selected shape to back of the other shapes
+	 */
 	private void moveToBack()
 	{
 		if (status.getText().equals(CLIENT_MODE)) {
@@ -449,6 +462,10 @@ public class Whiteboard extends JFrame implements ModelListener
 	}
 	
 	@Override
+	/**
+	 * Notifies the clients when a shape model has changed
+	 * @param model the model that has changed
+	 */
 	public void modelChanged(DShapeModel model)
 	{
 		if (SERVER_MODE.equals(status.getText()))
@@ -457,6 +474,10 @@ public class Whiteboard extends JFrame implements ModelListener
 	
 	
 	@Override
+	/**
+	 * Updates the text controls when a shape has been selected
+	 * @param model the model of the shape that has been selected
+	 */
 	public void modelSelected(DShapeModel model) {
 		if (model instanceof DTextModel) {
 			DTextModel textModel =  (DTextModel) model;
@@ -467,6 +488,11 @@ public class Whiteboard extends JFrame implements ModelListener
 			disableTextControls();
 	}
 	
+	/**
+	 * Sends clients a model and a given command of what to do with the model
+	 * @param command the command to give the clients
+	 * @param model the model to send to the clients
+	 */
 	private void updateClients(String command, DShapeModel model) {
 		for (int i = 0; i < clientStreams.size(); i++) {
 			try
@@ -486,24 +512,44 @@ public class Whiteboard extends JFrame implements ModelListener
 		}
 	}
 	
+	/**
+	 * Enables the text controls 
+	 */
 	public void enableTextControls() {
         textInput.setEnabled(true);
         fonts.setEnabled(true);
     }
+	
+	/**
+	 * Disables the text controls
+	 */
     public void disableTextControls() {
         textInput.setEnabled(false);
         textInput.setText("");
         fonts.setEnabled(false);
     }
+    
+    /**
+     * Updates text controls when text shape has been selected
+     * @param theText the text of the text shape
+     * @param theFont the font of the text shape
+     */
     public void updateTextControls(String theText, String theFont) {
     	fonts.setSelectedItem(theFont);
     	textInput.setText(theText);
     }
     
+    /**
+     * Gets the status of this whiteboard (client, server, or n/a)
+     * @return the status of this whiteboard
+     */
     public String getStatus() {
     	return status.getText();
     }
     
+    /**
+     * A class to accept clients
+     */
     class ServerAccepter extends Thread {
     	private int port;
         ServerAccepter(int port) {
@@ -532,6 +578,9 @@ public class Whiteboard extends JFrame implements ModelListener
         }
     }
     
+    /**
+     * A class that handles the client side of a tcp connection
+     */
     class ClientHandler extends Thread{
     	private String name;
     	private int port;
@@ -584,12 +633,20 @@ public class Whiteboard extends JFrame implements ModelListener
     	}
     }
     
+    /**
+     * Used when a file is opened to listen to shapes already on the fule
+     */
     private void listenToShapes() {
     	for (DShape s: canvas.getShapes()) {
 			DShapeModel model = s.getModel();
 			model.addModelListener(this);
 		}
     }
+    
+    /**
+     * Runs the WhiteBoard Application 
+     * @param args command line arguments
+     */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable()
 		{

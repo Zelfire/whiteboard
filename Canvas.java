@@ -209,7 +209,7 @@ public class Canvas extends JPanel
 			theShape = new DRect();
 		}
 		else if (shapeModel instanceof DOvalModel) {
-			theShape = new DOVal();
+			theShape = new DOval();
 		}
 		else if (shapeModel instanceof DTextModel) {
 			theShape = new DText(); 
