@@ -414,6 +414,7 @@ public class Canvas extends JPanel
 		for (DShapeModel shape : inputShapes) {
 			addShape(shape);
 		}
+		setSelected(null);
 		tmodel.fireTableDataChanged();
 		in.close();
 	}

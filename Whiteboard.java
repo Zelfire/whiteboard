@@ -142,6 +142,7 @@ public class Whiteboard extends JFrame implements ModelListener
 				if (selectedFile != null) {
 					try {
 						canvas.open(selectedFile);
+						listenToShapes();
 					}
 					catch(FileNotFoundException e) {
 						JOptionPane.showMessageDialog(null, "File not found!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -582,7 +583,13 @@ public class Whiteboard extends JFrame implements ModelListener
     		}
     	}
     }
-
+    
+    private void listenToShapes() {
+    	for (DShape s: canvas.getShapes()) {
+			DShapeModel model = s.getModel();
+			model.addModelListener(this);
+		}
+    }
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable()
 		{
@@ -590,8 +597,6 @@ public class Whiteboard extends JFrame implements ModelListener
 			public void run()
 			{
 				new Whiteboard();
-				Whiteboard client = new Whiteboard(); //For testing. Need to remove later.
-				client.setLocation(client.getWidth(), 0);
 			}
 		});
 	}
