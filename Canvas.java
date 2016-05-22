@@ -17,7 +17,6 @@ public class Canvas extends JPanel
 	private DShape selected;
 	private ShapeTableModel tmodel;
 	private File currentFile;
-	private Whiteboard whiteboard;
 
 	public static final int KNOB_SIZE = 9;
 	
@@ -182,9 +181,6 @@ public class Canvas extends JPanel
 		tmodel.setCanvas(this);
 	}
 	
-	public void setWhiteboard(Whiteboard board) {
-		whiteboard = board;
-	}
 
 	@Override
 	public void paintComponent(Graphics g) {
@@ -240,19 +236,15 @@ public class Canvas extends JPanel
 	}
 	
 	/**
-	 * Private helper method to set the selected shape
+	 * helper method to set the selected shape
 	 * @param shape the shape to be set as the selected shape
 	 */
-	private void setSelected(DShape shape)
+	public void setSelected(DShape shape)
 	{
 		selected = shape;	
-		if (selected instanceof DText) {
-			whiteboard.enableTextControls();
-			DTextModel textModel = (DTextModel) selected.getModel();
-			whiteboard.updateTextControls(textModel.getText(), textModel.getFontName());
-		}
-		else {
-			whiteboard.disableTextControls();
+		if (shape!=null) {
+			DShapeModel model = selected.getModel();
+			model.notifyModelSelected();
 		}
 		repaint();
 	}
@@ -286,7 +278,7 @@ public class Canvas extends JPanel
 			selectedModel = selected.getModel();
 			shapes.remove(selected);
 			if (shapes.size() > 0)
-				setSelected(shapes.get(shapes.size() -1));
+				selected = shapes.get(shapes.size() -1);
 			else
 				selected = null;
 			repaint();	

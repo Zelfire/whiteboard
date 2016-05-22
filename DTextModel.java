@@ -23,13 +23,13 @@ public class DTextModel extends DShapeModel
     
     public void setText(String newText) {
         text = newText;
-        notifyListeners();
+        notifyModelChange();
     }
     
     public void setFontName(String f)
     {
     	fontName =f;
-    	notifyListeners();
+    	notifyModelChange();
     }
     
     @Override

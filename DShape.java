@@ -47,6 +47,10 @@ public abstract class DShape implements ModelListener
 		view.repaint();
 	}
 	
+	@Override
+	public void modelSelected(DShapeModel model) {	
+	}
+	
 	public void setModel(DShapeModel newModel) {
 		shapeModel = newModel;
 		shapeModel.addModelListener(this);

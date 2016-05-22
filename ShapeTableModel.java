@@ -70,4 +70,8 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
 			}
 		}
 	}
+	
+	@Override
+	public void modelSelected(DShapeModel model) {
+	}
 }

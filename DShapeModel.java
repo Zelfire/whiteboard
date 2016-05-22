@@ -51,27 +51,27 @@ public class DShapeModel
 	
 	public void setX(int newX) {
 		bound.x = newX;
-		notifyListeners();
+		notifyModelChange();
 	}
 	
 	public void setY(int newY) {
 		bound.y = newY;
-		notifyListeners();
+		notifyModelChange();
 	}
 	
 	public void setWidth(int newWidth) {
 		bound.width = Math.abs(newWidth);
-		notifyListeners();
+		notifyModelChange();
 	}
 	
 	public void setHeight(int newHeight) {
 		bound.height = Math.abs(newHeight);
-		notifyListeners();
+		notifyModelChange();
 	}
 	
 	public void setColor(Color newColor) {
 		color = newColor;
-		notifyListeners();
+		notifyModelChange();
 	}
 	
 	public void addModelListener(ModelListener listener)
@@ -93,7 +93,7 @@ public class DShapeModel
 		return anchor;
 	}
 	
-	public void notifyListeners()
+	public void notifyModelChange()
 	{
 		for (ModelListener ml: listeners)
 		{
@@ -101,15 +101,22 @@ public class DShapeModel
 		}
 	}
 	
+	public void notifyModelSelected() {
+		for (ModelListener ml: listeners)
+		{
+			ml.modelSelected(this);
+		}
+	}
+	
 	public void mimic(DShapeModel other) {
 		this.bound = other.bound;
 		this.color = other.color;
 		this.anchor = other.anchor;
-		notifyListeners();
+		notifyModelChange();
 	}
 	
 	public void setBounds(Rectangle newBounds) {
 		bound = newBounds;
-		notifyListeners();
+		notifyModelChange();
 	}
 }

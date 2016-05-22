@@ -28,7 +28,7 @@ public class Whiteboard extends JFrame implements ModelListener
 	public static final String CLIENT_MODE = "Client Mode";
 	public static final String SERVER_MODE = "Server Mode";
 	private ArrayList<ObjectOutputStream> clientStreams = new ArrayList<>();
-	private boolean afterAdd;
+	private boolean addingShape;
 	
 	private Canvas canvas;
 	
@@ -43,7 +43,6 @@ public class Whiteboard extends JFrame implements ModelListener
 		//Add the canvas
 		canvas = new Canvas();
 		add(canvas, BorderLayout.CENTER);
-		canvas.setWhiteboard(this);
 		
 		//Add the file menu
 		JMenuBar menuBar = new JMenuBar();
@@ -299,7 +298,7 @@ public class Whiteboard extends JFrame implements ModelListener
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				DShape selected = canvas.getSelected();
-				if (canvas.getSelected() != null && !status.getText().equals(CLIENT_MODE)) {
+				if (canvas.getSelected() != null) {
 					Color newColor = JColorChooser.showDialog(null, "Color", selected.getColor());
 					selected.getModel().setColor(newColor);
 				}
@@ -311,16 +310,16 @@ public class Whiteboard extends JFrame implements ModelListener
 		textInput.setMaximumSize(new Dimension(150, textInput.getPreferredSize().height)); //Temporary size for now
 		textInput.getDocument().addDocumentListener(new DocumentListener() {
 		    public void changedUpdate(DocumentEvent e) {
-		        setText();
+		        setTextinShape();
 		    }
 		    public void removeUpdate(DocumentEvent e) {
-		        setText();
+		        setTextinShape();
 		    }
 		    public void insertUpdate(DocumentEvent e) {
-		        setText();
+		        setTextinShape();
 		    }
-		    public void setText() {
-		    	if (!afterAdd)
+		    public void setTextinShape() {
+		    	if (!addingShape)
 		    		canvas.updateTextShape(textInput.getText());
 		    }
 		});
@@ -335,7 +334,7 @@ public class Whiteboard extends JFrame implements ModelListener
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String name = (String) fonts.getSelectedItem();
-				if (!afterAdd)
+				if (!addingShape) 
 					canvas.setFont(name);
 			}
 		});
@@ -412,10 +411,9 @@ public class Whiteboard extends JFrame implements ModelListener
 		model.setHeight(20);
 		model.setColor(Color.GRAY);
 		model.addModelListener(this);
-		if (model instanceof DTextModel) {
-			afterAdd = true;
-		}
+		addingShape = true;
 		canvas.addShape(model);
+		addingShape = false;
 		updateClients(ADD_COMMAND, model);
 	}
 	
@@ -452,17 +450,20 @@ public class Whiteboard extends JFrame implements ModelListener
 	@Override
 	public void modelChanged(DShapeModel model)
 	{
-		/*
+		if (SERVER_MODE.equals(status.getText()))
+			updateClients(CHANGE_COMMAND, model);	
+	}
+	
+	
+	@Override
+	public void modelSelected(DShapeModel model) {
 		if (model instanceof DTextModel) {
-			enableTextControls();
 			DTextModel textModel =  (DTextModel) model;
+			enableTextControls();
 			updateTextControls(textModel.getText(), textModel.getFontName());
 		}
-		else
+		else 
 			disableTextControls();
-		*/
-		if (SERVER_MODE.equals(status.getText()))
-			updateClients(CHANGE_COMMAND, model);
 	}
 	
 	private void updateClients(String command, DShapeModel model) {
@@ -485,10 +486,8 @@ public class Whiteboard extends JFrame implements ModelListener
 	}
 	
 	public void enableTextControls() {
-		if (!status.getText().equals(CLIENT_MODE)) {
-	        textInput.setEnabled(true);
-	        fonts.setEnabled(true);	
-		}
+        textInput.setEnabled(true);
+        fonts.setEnabled(true);
     }
     public void disableTextControls() {
         textInput.setEnabled(false);
@@ -496,9 +495,8 @@ public class Whiteboard extends JFrame implements ModelListener
         fonts.setEnabled(false);
     }
     public void updateTextControls(String theText, String theFont) {
-    	textInput.setText(theText);
     	fonts.setSelectedItem(theFont);
-    	afterAdd = false;
+    	textInput.setText(theText);
     }
     
     public String getStatus() {
@@ -557,6 +555,7 @@ public class Whiteboard extends JFrame implements ModelListener
                 	
                 	if (command.equals(ADD_COMMAND)) {
                 		canvas.addShape(aModel);
+                		canvas.setSelected(null);
                 	}
                 	else if (command.equals(REMOVE_COMMAND)) {
                 		int modelID = aModel.getID();
