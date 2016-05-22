@@ -308,7 +308,7 @@ public class Whiteboard extends JFrame implements ModelListener
 		
 		//Set up the text controls
 		textInput.setEnabled(false);
-		textInput.setMaximumSize(new Dimension(150, textInput.getPreferredSize().height)); //Temporary size for now
+		textInput.setMaximumSize(new Dimension(150, textInput.getPreferredSize().height));
 		textInput.getDocument().addDocumentListener(new DocumentListener() {
 		    public void changedUpdate(DocumentEvent e) {
 		        setTextinShape();
@@ -329,7 +329,7 @@ public class Whiteboard extends JFrame implements ModelListener
 		String[] fontList = ge.getAvailableFontFamilyNames();
 		fonts = new JComboBox<>(fontList);
 		fonts.setEnabled(false);
-		fonts.setMaximumSize(new Dimension(150, textInput.getPreferredSize().height)); //Temporary size for now
+		fonts.setMaximumSize(new Dimension(150, textInput.getPreferredSize().height));
 		fonts.addActionListener(new ActionListener() {
 			
 			@Override

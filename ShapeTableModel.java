@@ -2,6 +2,9 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
+/**
+ * An abstract table model that pulls data from the DShapes on a Canvas
+ */
 public class ShapeTableModel extends AbstractTableModel implements ModelListener
 {
 	private Canvas canvas;
@@ -10,6 +13,9 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
 	private static final int Y_COLUMN = 1;
 	private static final int WIDTH_COLUMN = 2;
 	
+	/**
+	 * Creates a ShapeTableModel with no canvas reference
+	 */
 	public ShapeTableModel() {
 		canvas = null;
 	}
@@ -26,6 +32,10 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
 			return "HEIGHT";
 	}
 	
+	/**
+	 * Sets the canvas for this table model to pull data from
+	 * @param canvas the canvas to set
+	 */
 	public void setCanvas(Canvas canvas) {
 		this.canvas = canvas;
 	}
